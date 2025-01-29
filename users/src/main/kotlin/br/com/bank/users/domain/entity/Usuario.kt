@@ -9,14 +9,14 @@ import java.time.LocalDateTime
 data class Usuario(
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     val id: String? = null,
-    val nome: String,
+    var nome: String,
     @Column(unique = true)
     val email: String,
-    val senha: String,
+    var senha: String,
     @Column(unique = true)
     val cpf: String,
     @Enumerated(EnumType.STRING)
-    val genero: Genero,
+    var genero: Genero,
     var agencia: String = "",
     var conta: String = "",
     val dataNascimento: LocalDateTime,

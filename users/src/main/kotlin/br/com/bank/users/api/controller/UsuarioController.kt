@@ -1,5 +1,6 @@
 package br.com.bank.users.api.controller
 
+import br.com.bank.users.api.dto.input.AtualizarUsuarioDTO
 import br.com.bank.users.api.dto.input.CadastroUsuarioInputDTO
 import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
 import br.com.bank.users.api.dto.output.ObterUsuarioDTO
@@ -9,8 +10,10 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -34,5 +37,10 @@ class UsuarioController(
     @GetMapping("/{id}")
     fun obterUsuarioPorId(@PathVariable id: String): ObterUsuarioDetalhadoDTO {
         return usuarioService.obterUsuarioPorId(id)
+    }
+
+    @PatchMapping
+    fun atualizarUsuario(@RequestBody dto: AtualizarUsuarioDTO): ObterUsuarioDetalhadoDTO {
+        return usuarioService.atualizarUsuario(dto)
     }
 }

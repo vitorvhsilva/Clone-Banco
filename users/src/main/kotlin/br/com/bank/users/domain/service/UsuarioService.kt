@@ -1,5 +1,6 @@
 package br.com.bank.users.domain.service
 
+import br.com.bank.users.api.dto.input.AtualizarUsuarioDTO
 import br.com.bank.users.api.dto.input.CadastroUsuarioInputDTO
 import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
 import br.com.bank.users.api.dto.output.ObterUsuarioDTO
@@ -8,6 +9,7 @@ import br.com.bank.users.api.exception.NotFoundException
 import br.com.bank.users.domain.entity.Usuario
 import br.com.bank.users.domain.repository.UsuarioRepository
 import br.com.bank.users.domain.utils.mappers.UsuarioMapper
+import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -42,6 +44,24 @@ class UsuarioService (
         return usuariosDTO
     }
 
+    fun obterUsuarioPorId(id: String): ObterUsuarioDetalhadoDTO {
+        val usuario = usuarioRepository.findById(id).orElseThrow({NotFoundException("Usuário não encontrado!")})
+        return usuarioMapperImpl.entidadeParaObterUsuarioDetalhado(usuario)
+    }
+
+    @Transactional
+    fun atualizarUsuario(dto: AtualizarUsuarioDTO): ObterUsuarioDetalhadoDTO {
+        var usuario = usuarioRepository.findById(dto.id).orElseThrow({NotFoundException("Usuário não encontrado!")})
+
+        usuario.nome = dto.nome
+        usuario.senha = dto.senha
+        usuario.genero = dto.genero
+
+        return usuarioMapperImpl.entidadeParaObterUsuarioDetalhado(usuario)
+    }
+
+
+
     private fun injetarAgenciaeConta(usuario: Usuario) {
         var agencia: String
         var conta: String
@@ -53,10 +73,4 @@ class UsuarioService (
         usuario.agencia = agencia
         usuario.conta = conta
     }
-
-    fun obterUsuarioPorId(id: String): ObterUsuarioDetalhadoDTO {
-        val usuario = usuarioRepository.findById(id).orElseThrow({NotFoundException("Usuário não encontrado!")})
-        return usuarioMapperImpl.entidadeParaObterUsuarioDetalhado(usuario)
-    }
-
 }
