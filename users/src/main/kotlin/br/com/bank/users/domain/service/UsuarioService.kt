@@ -2,9 +2,12 @@ package br.com.bank.users.domain.service
 
 import br.com.bank.users.api.dto.input.CadastroUsuarioInputDTO
 import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
+import br.com.bank.users.api.dto.output.ObterUsuarioDTO
 import br.com.bank.users.domain.entity.Usuario
 import br.com.bank.users.domain.repository.UsuarioRepository
 import br.com.bank.users.domain.utils.mappers.UsuarioMapper
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -27,6 +30,16 @@ class UsuarioService (
             .body(usuarioOutput)
     }
 
+    fun obterTodosOsUsuarios(pageable: Pageable): Page<ObterUsuarioDTO> {
+        val usuarios: Page<Usuario> = usuarioRepository.findAll(pageable)
+
+        val usuariosDTO: Page<ObterUsuarioDTO> = usuarios.map{
+                u -> usuarioMapperImpl.entidadeParaObterUsuario(u)
+        }
+
+        return usuariosDTO
+    }
+
     private fun injetarAgenciaeConta(usuario: Usuario) {
         var agencia: String
         var conta: String
@@ -38,4 +51,5 @@ class UsuarioService (
         usuario.agencia = agencia
         usuario.conta = conta
     }
+
 }

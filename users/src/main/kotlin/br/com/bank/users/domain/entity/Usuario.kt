@@ -10,8 +10,10 @@ data class Usuario(
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     val id: String? = null,
     val nome: String,
+    @Column(unique = true)
     val email: String,
     val senha: String,
+    @Column(unique = true)
     val cpf: String,
     @Enumerated(EnumType.STRING)
     val genero: Genero,
