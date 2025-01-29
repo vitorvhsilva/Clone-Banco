@@ -6,6 +6,7 @@ import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
 import br.com.bank.users.api.dto.output.ObterUsuarioDTO
 import br.com.bank.users.api.dto.output.ObterUsuarioDetalhadoDTO
 import br.com.bank.users.api.exception.NotFoundException
+import br.com.bank.users.api.http.CartoesClient
 import br.com.bank.users.domain.entity.Usuario
 import br.com.bank.users.domain.repository.UsuarioRepository
 import br.com.bank.users.domain.service.strategy.SegmentoStrategy
@@ -22,7 +23,8 @@ import kotlin.random.Random
 class UsuarioService (
     private val usuarioRepository: UsuarioRepository,
     private val usuarioMapperImpl: UsuarioMapper,
-    private val strategys: List<SegmentoStrategy>
+    private val strategys: List<SegmentoStrategy>,
+    private val cartoesClient: CartoesClient
 ) {
     fun cadastrarUsuario(dto: CadastroUsuarioInputDTO): ResponseEntity<CadastroUsuarioOutputDTO> {
         var usuario: Usuario = usuarioMapperImpl.cadastroInputParaEntidade(dto)
@@ -86,7 +88,7 @@ class UsuarioService (
     }
 
     fun obterCartoesDisponiveisParaUsuario(id: String) {
-
+        cartoesClient.obterCartoesDisponiveisParaUsuario()
     }
 
 }
