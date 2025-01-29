@@ -23,6 +23,7 @@ data class Usuario(
     var conta: String = "",
     var rendaMensal: BigDecimal,
     var segmento: Segmento? = null,
+    val saldoContaCorrente: BigDecimal,
     val dataNascimento: LocalDateTime,
     var dataCriacaoConta: LocalDateTime,
     @Enumerated(EnumType.STRING)

@@ -22,5 +22,6 @@ data class CadastroUsuarioInputDTO(
     val genero: Genero,
     @Positive
     val rendaMensal: BigDecimal,
+    val saldoContaCorrente: BigDecimal,
     val dataNascimento: LocalDateTime
 )

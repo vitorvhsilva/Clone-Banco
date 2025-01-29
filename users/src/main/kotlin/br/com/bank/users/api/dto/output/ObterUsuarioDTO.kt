@@ -4,6 +4,7 @@ import br.com.bank.users.domain.utils.enums.Genero
 import br.com.bank.users.domain.utils.enums.Segmento
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class ObterUsuarioDTO(
@@ -17,5 +18,6 @@ data class ObterUsuarioDTO(
     var agencia: String = "",
     var conta: String = "",
     val segmento: Segmento? = null,
+    val saldoContaCorrente: BigDecimal,
     val dataNascimento: LocalDateTime
 )

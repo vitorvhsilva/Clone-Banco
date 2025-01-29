@@ -21,7 +21,8 @@ class UsuarioMapperImpl: UsuarioMapper {
             dataNascimento = dto.dataNascimento,
             dataCriacaoConta = LocalDateTime.now(),
             statusUsuario = StatusUsuario.ATIVO,
-            rendaMensal = dto.rendaMensal
+            rendaMensal = dto.rendaMensal,
+            saldoContaCorrente = dto.saldoContaCorrente
         )
     }
 
@@ -39,7 +40,8 @@ class UsuarioMapperImpl: UsuarioMapper {
             dataCriacaoConta = usuario.dataCriacaoConta,
             statusUsuario = usuario.statusUsuario,
             rendaMensal = usuario.rendaMensal,
-            segmento = usuario.segmento
+            segmento = usuario.segmento,
+            saldoContaCorrente = usuario.saldoContaCorrente
         )
     }
 
@@ -54,7 +56,8 @@ class UsuarioMapperImpl: UsuarioMapper {
             agencia = usuario.agencia,
             conta = usuario.conta,
             dataNascimento = usuario.dataNascimento,
-            segmento = usuario.segmento
+            segmento = usuario.segmento,
+            saldoContaCorrente = usuario.saldoContaCorrente
         )
     }
 
@@ -72,7 +75,8 @@ class UsuarioMapperImpl: UsuarioMapper {
             dataCriacaoConta = usuario.dataCriacaoConta,
             statusUsuario = usuario.statusUsuario,
             rendaMensal = usuario.rendaMensal,
-            segmento = usuario.segmento
+            segmento = usuario.segmento,
+            saldoContaCorrente = usuario.saldoContaCorrente
         )
     }
 

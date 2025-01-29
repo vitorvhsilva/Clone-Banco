@@ -19,6 +19,7 @@ data class CadastroUsuarioOutputDTO(
     var conta: String,
     val rendaMensal: BigDecimal,
     val segmento: Segmento? = null,
+    val saldoContaCorrente: BigDecimal,
     val dataNascimento: LocalDateTime,
     var dataCriacaoConta: LocalDateTime,
     @Enumerated(EnumType.STRING)

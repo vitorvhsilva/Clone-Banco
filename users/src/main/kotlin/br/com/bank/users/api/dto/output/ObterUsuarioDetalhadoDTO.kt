@@ -18,6 +18,7 @@ data class ObterUsuarioDetalhadoDTO(
     var conta: String = "",
     val rendaMensal: BigDecimal,
     val segmento: Segmento? = null,
+    val saldoContaCorrente: BigDecimal,
     val dataNascimento: LocalDateTime,
     var dataCriacaoConta: LocalDateTime,
     var statusUsuario: StatusUsuario
