@@ -3,6 +3,8 @@ package br.com.bank.users.domain.service
 import br.com.bank.users.api.dto.input.CadastroUsuarioInputDTO
 import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
 import br.com.bank.users.api.dto.output.ObterUsuarioDTO
+import br.com.bank.users.api.dto.output.ObterUsuarioDetalhadoDTO
+import br.com.bank.users.api.exception.NotFoundException
 import br.com.bank.users.domain.entity.Usuario
 import br.com.bank.users.domain.repository.UsuarioRepository
 import br.com.bank.users.domain.utils.mappers.UsuarioMapper
@@ -50,6 +52,11 @@ class UsuarioService (
 
         usuario.agencia = agencia
         usuario.conta = conta
+    }
+
+    fun obterUsuarioPorId(id: String): ObterUsuarioDetalhadoDTO {
+        val usuario = usuarioRepository.findById(id).orElseThrow({NotFoundException("Usuário não encontrado!")})
+        return usuarioMapperImpl.entidadeParaObterUsuarioDetalhado(usuario)
     }
 
 }
