@@ -36,4 +36,9 @@ class UsuarioController(
     fun atualizarUsuario(@RequestBody dto: AtualizarUsuarioDTO): ObterUsuarioDetalhadoDTO {
         return usuarioService.atualizarUsuario(dto)
     }
+
+    @GetMapping("/cartoes/{id}")
+    fun obterCartoesDisponiveisParaUsuario(@PathVariable id: String) {
+        return usuarioService.obterCartoesDisponiveisParaUsuario(id)
+    }
 }

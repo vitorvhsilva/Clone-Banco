@@ -85,4 +85,8 @@ class UsuarioService (
         return usuarioMapperImpl.entidadeParaObterUsuarioDetalhado(usuario)
     }
 
+    fun obterCartoesDisponiveisParaUsuario(id: String) {
+
+    }
+
 }
