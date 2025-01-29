@@ -4,7 +4,9 @@ import br.com.bank.users.domain.utils.enums.Genero
 import jakarta.persistence.*
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Positive
 import jakarta.validation.constraints.Size
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class CadastroUsuarioInputDTO(
@@ -18,5 +20,7 @@ data class CadastroUsuarioInputDTO(
     val cpf: String,
     @Enumerated(EnumType.STRING)
     val genero: Genero,
+    @Positive
+    val rendaMensal: BigDecimal,
     val dataNascimento: LocalDateTime
 )

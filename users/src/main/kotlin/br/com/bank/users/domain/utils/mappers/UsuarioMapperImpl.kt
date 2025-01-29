@@ -20,7 +20,8 @@ class UsuarioMapperImpl: UsuarioMapper {
             genero = dto.genero,
             dataNascimento = dto.dataNascimento,
             dataCriacaoConta = LocalDateTime.now(),
-            statusUsuario = StatusUsuario.ATIVO
+            statusUsuario = StatusUsuario.ATIVO,
+            rendaMensal = dto.rendaMensal
         )
     }
 
@@ -36,7 +37,9 @@ class UsuarioMapperImpl: UsuarioMapper {
             conta = usuario.conta,
             dataNascimento = usuario.dataNascimento,
             dataCriacaoConta = usuario.dataCriacaoConta,
-            statusUsuario = usuario.statusUsuario
+            statusUsuario = usuario.statusUsuario,
+            rendaMensal = usuario.rendaMensal,
+            segmento = usuario.segmento
         )
     }
 
@@ -51,6 +54,7 @@ class UsuarioMapperImpl: UsuarioMapper {
             agencia = usuario.agencia,
             conta = usuario.conta,
             dataNascimento = usuario.dataNascimento,
+            segmento = usuario.segmento
         )
     }
 
@@ -66,7 +70,9 @@ class UsuarioMapperImpl: UsuarioMapper {
             conta = usuario.conta,
             dataNascimento = usuario.dataNascimento,
             dataCriacaoConta = usuario.dataCriacaoConta,
-            statusUsuario = usuario.statusUsuario
+            statusUsuario = usuario.statusUsuario,
+            rendaMensal = usuario.rendaMensal,
+            segmento = usuario.segmento
         )
     }
 

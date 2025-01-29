@@ -1,8 +1,10 @@
 package br.com.bank.users.domain.entity
 
 import br.com.bank.users.domain.utils.enums.Genero
+import br.com.bank.users.domain.utils.enums.Segmento
 import br.com.bank.users.domain.utils.enums.StatusUsuario
 import jakarta.persistence.*
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Entity
@@ -19,6 +21,8 @@ data class Usuario(
     var genero: Genero,
     var agencia: String = "",
     var conta: String = "",
+    var rendaMensal: BigDecimal,
+    var segmento: Segmento? = null,
     val dataNascimento: LocalDateTime,
     var dataCriacaoConta: LocalDateTime,
     @Enumerated(EnumType.STRING)

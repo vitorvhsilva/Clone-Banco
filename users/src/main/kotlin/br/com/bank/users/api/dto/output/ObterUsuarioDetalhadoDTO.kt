@@ -1,8 +1,10 @@
 package br.com.bank.users.api.dto.output
 
 import br.com.bank.users.domain.utils.enums.Genero
+import br.com.bank.users.domain.utils.enums.Segmento
 import br.com.bank.users.domain.utils.enums.StatusUsuario
 import jakarta.persistence.*
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 data class ObterUsuarioDetalhadoDTO(
@@ -14,6 +16,8 @@ data class ObterUsuarioDetalhadoDTO(
     val genero: Genero,
     var agencia: String = "",
     var conta: String = "",
+    val rendaMensal: BigDecimal,
+    val segmento: Segmento? = null,
     val dataNascimento: LocalDateTime,
     var dataCriacaoConta: LocalDateTime,
     var statusUsuario: StatusUsuario
