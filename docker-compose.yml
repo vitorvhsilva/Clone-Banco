@@ -1,19 +1,39 @@
 services:
+    server:
+        container_name: server
+        image: server
+        ports: 
+            - "8761:8761"
+    gateway:
+        container_name: gateway
+        image: gateway
+        ports: 
+            - "8080:8080"
+        depends_on:
+            - server
+        environment:
+            - eureka.client.serviceUrl.defaultZone=http://server:8761/eureka
     ms-users:
+        container_name: ms-users
         image: users
         ports: 
             - "8081:8081"
         depends_on:
-            - postgres
+            - db_postgres
+            - gateway
         environment:
-            - spring.datasource.url=jdbc:postgresql://postgres:5433/postgres    
-    postgres:
+            - spring.datasource.url=jdbc:postgresql://db_postgres:5432/postgres    
+            - spring.datasource.username=postgres
+            - spring.datasource.password=root
+            - eureka.client.serviceUrl.defaultZone=http://server:8761/eureka
+    db_postgres:
+        container_name: db_postgres
         image: postgres:latest
         restart: always
         environment:
             POSTGRES_USER: postgres 
             POSTGRES_PASSWORD: root 
         ports:
-            - "5433:5433" 
+            - "54321:5432" 
 
     
