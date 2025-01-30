@@ -1,0 +1,19 @@
+services:
+    ms-users:
+        image: users
+        ports: 
+            - "8081:8081"
+        depends_on:
+            - postgres
+        environment:
+            - spring.datasource.url=jdbc:postgresql://postgres:5433/postgres    
+    postgres:
+        image: postgres:latest
+        restart: always
+        environment:
+            POSTGRES_USER: postgres 
+            POSTGRES_PASSWORD: root 
+        ports:
+            - "5433:5433" 
+
+    
