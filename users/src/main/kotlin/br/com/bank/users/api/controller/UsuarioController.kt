@@ -1,5 +1,6 @@
 package br.com.bank.users.api.controller
 
+import br.com.bank.users.api.dto.cards.CatalogoCartaoOutputDTO
 import br.com.bank.users.api.dto.input.AtualizarUsuarioDTO
 import br.com.bank.users.api.dto.input.CadastroUsuarioInputDTO
 import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
@@ -32,13 +33,13 @@ class UsuarioController(
         return usuarioService.obterUsuarioPorId(id)
     }
 
-    @PatchMapping
+    @PutMapping
     fun atualizarUsuario(@RequestBody dto: AtualizarUsuarioDTO): ObterUsuarioDetalhadoDTO {
         return usuarioService.atualizarUsuario(dto)
     }
 
     @GetMapping("/cartoes/{id}")
-    fun obterCartoesDisponiveisParaUsuario(@PathVariable id: String) {
+    fun obterCartoesDisponiveisParaUsuario(@PathVariable id: String): List<CatalogoCartaoOutputDTO> {
         return usuarioService.obterCartoesDisponiveisParaUsuario(id)
     }
 }

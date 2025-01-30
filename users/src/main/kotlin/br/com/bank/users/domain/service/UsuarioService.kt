@@ -1,5 +1,6 @@
 package br.com.bank.users.domain.service
 
+import br.com.bank.users.api.dto.cards.CatalogoCartaoOutputDTO
 import br.com.bank.users.api.dto.input.AtualizarUsuarioDTO
 import br.com.bank.users.api.dto.input.CadastroUsuarioInputDTO
 import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
@@ -75,7 +76,7 @@ class UsuarioService (
 
     @Transactional
     fun atualizarUsuario(dto: AtualizarUsuarioDTO): ObterUsuarioDetalhadoDTO {
-        var usuario = usuarioRepository.findById(dto.id).orElseThrow({NotFoundException("Usuário não encontrado!")})
+        val usuario = usuarioRepository.findById(dto.id).orElseThrow({NotFoundException("Usuário não encontrado!")})
 
         usuario.nome = dto.nome
         usuario.senha = dto.senha
@@ -87,8 +88,11 @@ class UsuarioService (
         return usuarioMapperImpl.entidadeParaObterUsuarioDetalhado(usuario)
     }
 
-    fun obterCartoesDisponiveisParaUsuario(id: String) {
-        cartoesClient.obterCartoesDisponiveisParaUsuario()
+    fun obterCartoesDisponiveisParaUsuario(id: String): List<CatalogoCartaoOutputDTO> {
+        val usuario = usuarioRepository.findById(id).orElseThrow({NotFoundException("Usuário não encontrado!")})
+
+        val cartoes = cartoesClient.obterCartoesDisponiveisParaUsuario(usuario.segmento!!)
+        return cartoes
     }
 
 }
