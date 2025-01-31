@@ -14,6 +14,7 @@ import br.com.bank.users.domain.repository.UsuarioRepository
 import br.com.bank.users.domain.service.strategy.SegmentoStrategy
 import br.com.bank.users.domain.utils.mappers.UsuarioMapper
 import jakarta.transaction.Transactional
+import org.slf4j.Logger
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -28,7 +29,8 @@ class UsuarioService (
     private val usuarioMapperImpl: UsuarioMapper,
     private val strategys: List<SegmentoStrategy>,
     private val cartoesClient: CartoesClient,
-    private val kafkaTemplate: KafkaTemplate<String, PedidoCartaoDTO>
+    private val kafkaTemplate: KafkaTemplate<String, PedidoCartaoDTO>,
+    private val logger: Logger
 ) {
     fun cadastrarUsuario(dto: CadastroUsuarioInputDTO): ResponseEntity<CadastroUsuarioOutputDTO> {
         var usuario: Usuario = usuarioMapperImpl.cadastroInputParaEntidade(dto)
@@ -105,8 +107,7 @@ class UsuarioService (
             throw NotFoundException("Cartão não encontrado!")
         }
 
-        println(dto)
-
+        logger.info("Pedido de cartão do usuário ${dto.idUsuario} enviado")
         kafkaTemplate.send("pedidos-cartoes-topic", dto.idUsuario, dto)
     }
 

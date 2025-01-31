@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class CartaoService(
     private val catalogoMapper: CatalogoCartaoMapper,
-    private val catalogoRepository: CatalogoCartoesRepository
+    private val catalogoRepository: CatalogoCartoesRepository,
 ) {
     fun obterCartoesDisponiveisParaUsuario(segmento: Segmento): List<CatalogoCartaoOutputDTO> {
         val cartoes: List<CatalogoCartoes> = catalogoRepository.findAllBySegmento(segmento)
@@ -22,7 +22,7 @@ class CartaoService(
         val cartoesPegos: List<CatalogoCartaoOutputDTO> = cartoes.map{
             c -> catalogoMapper.entidadeParaOutput(c)
         }
-        
+
         return cartoesPegos
     }
 
