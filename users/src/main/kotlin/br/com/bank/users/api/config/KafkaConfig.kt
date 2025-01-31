@@ -1,6 +1,6 @@
 package br.com.bank.users.api.config
 
-import br.com.bank.users.api.dto.input.PedidoCartaoDTO
+import br.com.bank.users.api.dto.events.PedidoCartaoDTO
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
@@ -12,7 +12,7 @@ import org.springframework.kafka.core.ProducerFactory
 import org.springframework.kafka.support.serializer.JsonSerializer
 
 @Configuration
-class ProducerKafkaConfig (
+class KafkaConfig (
     @Value(value = "\${spring.kafka.bootstrap-servers:localhost:9092}") private val bootstrapAddress: String
 ) {
     @Bean

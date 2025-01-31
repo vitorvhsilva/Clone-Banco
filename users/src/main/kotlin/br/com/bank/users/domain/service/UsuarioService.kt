@@ -1,6 +1,7 @@
 package br.com.bank.users.domain.service
 
-import br.com.bank.users.api.dto.cards.CatalogoCartaoOutputDTO
+import br.com.bank.users.api.dto.events.CatalogoCartaoOutputDTO
+import br.com.bank.users.api.dto.events.PedidoCartaoDTO
 import br.com.bank.users.api.dto.input.AtualizarUsuarioDTO
 import br.com.bank.users.api.dto.input.CadastroUsuarioInputDTO
 import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 import kotlin.random.Random
 
@@ -25,7 +27,8 @@ class UsuarioService (
     private val usuarioRepository: UsuarioRepository,
     private val usuarioMapperImpl: UsuarioMapper,
     private val strategys: List<SegmentoStrategy>,
-    private val cartoesClient: CartoesClient
+    private val cartoesClient: CartoesClient,
+    private val kafkaTemplate: KafkaTemplate<String, PedidoCartaoDTO>
 ) {
     fun cadastrarUsuario(dto: CadastroUsuarioInputDTO): ResponseEntity<CadastroUsuarioOutputDTO> {
         var usuario: Usuario = usuarioMapperImpl.cadastroInputParaEntidade(dto)
@@ -93,6 +96,18 @@ class UsuarioService (
 
         val cartoes = cartoesClient.obterCartoesDisponiveisParaUsuario(usuario.segmento!!)
         return cartoes
+    }
+
+    fun fazerPedidoDeCartao(dto: PedidoCartaoDTO) {
+        val cartoesEncontrados = obterCartoesDisponiveisParaUsuario(dto.idUsuario)
+
+        if (cartoesEncontrados.none{it.id == dto.idCartao }) { //cartao nao existe
+            throw NotFoundException("Cartão não encontrado!")
+        }
+
+        println(dto)
+
+        kafkaTemplate.send("pedidos-cartoes-topic", dto.idUsuario, dto)
     }
 
 }

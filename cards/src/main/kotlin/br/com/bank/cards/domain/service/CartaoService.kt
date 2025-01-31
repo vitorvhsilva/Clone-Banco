@@ -22,8 +22,7 @@ class CartaoService(
         val cartoesPegos: List<CatalogoCartaoOutputDTO> = cartoes.map{
             c -> catalogoMapper.entidadeParaOutput(c)
         }
-
-        println(cartoesPegos)
+        
         return cartoesPegos
     }
 

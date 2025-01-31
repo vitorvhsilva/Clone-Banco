@@ -1,4 +1,4 @@
-package br.com.bank.users.api.dto.cards
+package br.com.bank.users.api.dto.events
 
 import br.com.bank.users.domain.utils.enums.Bandeira
 import br.com.bank.users.domain.utils.enums.Segmento
