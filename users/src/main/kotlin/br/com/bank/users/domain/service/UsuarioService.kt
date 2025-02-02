@@ -1,16 +1,13 @@
 package br.com.bank.users.domain.service
 
-import br.com.bank.users.api.dto.events.CartaoOutputDTO
-import br.com.bank.users.api.dto.events.CatalogoCartaoOutputDTO
 import br.com.bank.users.api.dto.events.PedidoCartaoCompletoDTO
-import br.com.bank.users.api.dto.events.PedidoCartaoDTO
+import br.com.bank.users.api.dto.events.PedidoCartaoInputDTO
 import br.com.bank.users.api.dto.input.AtualizarUsuarioDTO
 import br.com.bank.users.api.dto.input.CadastroUsuarioInputDTO
 import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
 import br.com.bank.users.api.dto.output.ObterUsuarioDTO
 import br.com.bank.users.api.dto.output.ObterUsuarioDetalhadoDTO
 import br.com.bank.users.api.exception.NotFoundException
-import br.com.bank.users.api.http.CartoesClient
 import br.com.bank.users.domain.entity.Usuario
 import br.com.bank.users.domain.repository.UsuarioRepository
 import br.com.bank.users.domain.service.strategy.SegmentoStrategy
@@ -30,7 +27,6 @@ class UsuarioService (
     private val usuarioRepository: UsuarioRepository,
     private val usuarioMapperImpl: UsuarioMapper,
     private val strategys: List<SegmentoStrategy>,
-    private val cartoesClient: CartoesClient,
     private val kafkaTemplate: KafkaTemplate<String, PedidoCartaoCompletoDTO>,
     private val logger: Logger
 ) {
@@ -78,10 +74,7 @@ class UsuarioService (
 
     fun obterUsuarioPorId(id: String): ObterUsuarioDetalhadoDTO {
         val usuario = usuarioRepository.findById(id).orElseThrow({NotFoundException("Usuário não encontrado!")})
-        val usuarioDetalhado = usuarioMapperImpl.entidadeParaObterUsuarioDetalhado(usuario)
-
-        usuarioDetalhado.cartoes = obterCartoesDoUsuario(usuarioDetalhado.id!!)
-        return usuarioDetalhado
+        return usuarioMapperImpl.entidadeParaObterUsuarioDetalhado(usuario)
     }
 
     @Transactional
@@ -98,26 +91,8 @@ class UsuarioService (
         return usuarioMapperImpl.entidadeParaObterUsuarioDetalhado(usuario)
     }
 
-    fun obterCartoesDisponiveisParaUsuario(id: String): List<CatalogoCartaoOutputDTO> {
-        val usuario = usuarioRepository.findById(id).orElseThrow({NotFoundException("Usuário não encontrado!")})
-
-        val cartoes = cartoesClient.obterCartoesDisponiveisParaUsuario(usuario.segmento!!)
-        return cartoes
-    }
-
-    fun obterCartoesDoUsuario(id: String): List<CartaoOutputDTO> {
-        val cartoes = cartoesClient.obterCartoesDisponiveisDoUsuario(id)
-        return cartoes
-    }
-
-    fun fazerPedidoDeCartao(dto: PedidoCartaoDTO) {
+    fun fazerPedidoDeCartao(dto: PedidoCartaoInputDTO): ResponseEntity<Void> {
         val usuario = usuarioRepository.findById(dto.idUsuario).orElseThrow({NotFoundException("Usuário não encontrado!")})
-
-        val cartoesEncontrados = obterCartoesDisponiveisParaUsuario(dto.idUsuario)
-
-        if (cartoesEncontrados.none{it.id == dto.idCartao }) { //cartao nao existe
-            throw NotFoundException("Cartão não encontrado!")
-        }
 
         val pedidoCartao = PedidoCartaoCompletoDTO(
             nomeUsuario = usuario.nome,
@@ -130,6 +105,8 @@ class UsuarioService (
 
         kafkaTemplate.send("pedidos-cartoes-topic", pedidoCartao.idUsuario, pedidoCartao)
         logger.info("Pedido de cartão do usuário ${dto.idUsuario} enviado!")
+
+        return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
 }

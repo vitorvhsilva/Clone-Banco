@@ -11,6 +11,7 @@ CREATE TABLE tb_catalogo (
 CREATE TABLE tb_cartoes (
     id_cartao UUID PRIMARY KEY,
     id_usuario VARCHAR(255) NOT NULL,
+    id_catalogo SERIAL NOT NULL,
     nome_cartao VARCHAR(255) NOT NULL,
     nome_usuario VARCHAR(255) NOT NULL,
     numero_cartao VARCHAR(16) NOT NULL,

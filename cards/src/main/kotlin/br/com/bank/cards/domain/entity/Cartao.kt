@@ -14,6 +14,7 @@ data class Cartao (
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     val idCartao: UUID? = null,
     val idUsuario: String,
+    val idCatalogo: Long,
     val nomeCartao: String,
     val nomeUsuario: String,
     @Size(min = 16, max = 16)

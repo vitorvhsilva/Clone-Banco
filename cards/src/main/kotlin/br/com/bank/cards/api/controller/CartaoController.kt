@@ -15,12 +15,12 @@ class CartaoController (
     private val cartaoService: CartaoService
 ) {
 
-    @GetMapping("/segmento/{segmento}")
-    fun obterCartoesDisponiveisParaUsuario(@PathVariable segmento: Segmento): List<CatalogoCartaoOutputDTO>{
-        return cartaoService.obterCartoesDisponiveisParaUsuario(segmento)
+    @GetMapping("/segmentos/{segmento}")
+    fun obterCartoesDisponiveisParaSegmento(@PathVariable segmento: Segmento): List<CatalogoCartaoOutputDTO>{
+        return cartaoService.obterCartoesDisponiveisParaSegmento(segmento)
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/usuarios/{id}")
     fun obterCartoesDisponiveisDoUsuario(@PathVariable id: String): List<CartaoOutputDTO>{
         return cartaoService.obterCartoesDisponiveisDoUsuario(id)
     }

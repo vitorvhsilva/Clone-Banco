@@ -21,6 +21,5 @@ data class ObterUsuarioDetalhadoDTO(
     val saldoContaCorrente: BigDecimal,
     val dataNascimento: LocalDateTime,
     var dataCriacaoConta: LocalDateTime,
-    var statusUsuario: StatusUsuario,
-    var cartoes: List<CartaoOutputDTO>? = null
+    var statusUsuario: StatusUsuario
 )

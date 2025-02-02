@@ -17,7 +17,7 @@ class CartaoService(
     private val cartaoRepository: CartaoRepository,
     private val cartaoMapper: CartaoMapper
 ) {
-    fun obterCartoesDisponiveisParaUsuario(segmento: Segmento): List<CatalogoCartaoOutputDTO> {
+    fun obterCartoesDisponiveisParaSegmento(segmento: Segmento): List<CatalogoCartaoOutputDTO> {
         val cartoes: List<CatalogoCartoes> = catalogoRepository.findAllBySegmento(segmento)
 
         if (cartoes.isEmpty()) {

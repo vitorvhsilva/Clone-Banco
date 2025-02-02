@@ -9,7 +9,9 @@ import br.com.bank.cards.domain.repository.CatalogoCartoesRepository
 import br.com.bank.cards.domain.utils.enums.Bandeira
 import br.com.bank.cards.domain.utils.enums.Segmento
 import br.com.bank.cards.domain.utils.enums.TipoCartao
+import br.com.bank.users.api.exception.CardAlreadyMadeException
 import br.com.bank.users.api.exception.NotFoundException
+import br.com.bank.users.api.exception.SegmentoNotAllowedException
 import jakarta.persistence.*
 import jakarta.validation.constraints.Size
 import org.slf4j.Logger
@@ -28,12 +30,25 @@ class PedidoCartaoListener (
     @KafkaListener(topics = ["pedidos-cartoes-topic"], groupId = "processar-pedido")
     fun processarPedido(dto: PedidoCartaoCompletoDTO) {
         println(dto)
-        logger.info("Pedido de cartão para o usuário ${dto.idUsuario} recebido!")
+        logger.info("Pedido de cartão de id ${dto.idCartao} para o usuário ${dto.idUsuario} recebido!")
 
         val cartaoCatalogo = catalogoRepository.findById(dto.idCartao).orElseThrow({NotFoundException("Cartão não encontrado!")})
 
+        if (!cartaoCatalogo.segmento.equals(dto.segmento)) {
+            logger.error("Segmento do usuário não permite esse cartão!")
+            throw SegmentoNotAllowedException("Segmento do usuário não permite esse cartão!")
+        }
+
+        val cartoesDoUsuario = cartaoRepository.findAllByIdUsuario(dto.idUsuario)
+
+        if (!cartoesDoUsuario.none{it.idCatalogo == dto.idCartao}) {
+            logger.error("Esse cartão já foi feito!")
+            throw CardAlreadyMadeException("Esse cartão já foi feito!")
+        }
+
         val cartao = Cartao (
             idUsuario = dto.idUsuario,
+            idCatalogo = dto.idCartao,
             nomeCartao = cartaoCatalogo.nome,
             nomeUsuario = dto.nomeUsuario,
             agencia = dto.agencia,
