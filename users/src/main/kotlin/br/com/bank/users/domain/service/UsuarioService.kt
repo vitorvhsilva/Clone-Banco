@@ -1,6 +1,7 @@
 package br.com.bank.users.domain.service
 
 import br.com.bank.users.api.dto.events.CatalogoCartaoOutputDTO
+import br.com.bank.users.api.dto.events.PedidoCartaoCompletoDTO
 import br.com.bank.users.api.dto.events.PedidoCartaoDTO
 import br.com.bank.users.api.dto.input.AtualizarUsuarioDTO
 import br.com.bank.users.api.dto.input.CadastroUsuarioInputDTO
@@ -29,7 +30,7 @@ class UsuarioService (
     private val usuarioMapperImpl: UsuarioMapper,
     private val strategys: List<SegmentoStrategy>,
     private val cartoesClient: CartoesClient,
-    private val kafkaTemplate: KafkaTemplate<String, PedidoCartaoDTO>,
+    private val kafkaTemplate: KafkaTemplate<String, PedidoCartaoCompletoDTO>,
     private val logger: Logger
 ) {
     fun cadastrarUsuario(dto: CadastroUsuarioInputDTO): ResponseEntity<CadastroUsuarioOutputDTO> {
@@ -101,14 +102,25 @@ class UsuarioService (
     }
 
     fun fazerPedidoDeCartao(dto: PedidoCartaoDTO) {
+        val usuario = usuarioRepository.findById(dto.idUsuario).orElseThrow({NotFoundException("Usuário não encontrado!")})
+
         val cartoesEncontrados = obterCartoesDisponiveisParaUsuario(dto.idUsuario)
 
         if (cartoesEncontrados.none{it.id == dto.idCartao }) { //cartao nao existe
             throw NotFoundException("Cartão não encontrado!")
         }
 
-        logger.info("Pedido de cartão do usuário ${dto.idUsuario} enviado")
-        kafkaTemplate.send("pedidos-cartoes-topic", dto.idUsuario, dto)
+        val pedidoCartao = PedidoCartaoCompletoDTO(
+            nomeUsuario = usuario.nome,
+            segmento = usuario.segmento,
+            idUsuario = dto.idUsuario,
+            idCartao = dto.idCartao,
+            conta = usuario.conta,
+            agencia = usuario.agencia
+        )
+
+        kafkaTemplate.send("pedidos-cartoes-topic", pedidoCartao.idUsuario, pedidoCartao)
+        logger.info("Pedido de cartão do usuário ${dto.idUsuario} enviado!")
     }
 
 }

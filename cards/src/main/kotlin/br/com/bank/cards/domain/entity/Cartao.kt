@@ -6,22 +6,23 @@ import br.com.bank.cards.domain.utils.enums.TipoCartao
 import jakarta.persistence.*
 import jakarta.validation.constraints.Size
 import java.math.BigDecimal
+import java.util.UUID
 
 @Entity
 @Table(name = "tb_cartoes")
 data class Cartao (
     @Id @GeneratedValue(strategy = GenerationType.UUID)
-    val idCartao: String,
+    val idCartao: UUID? = null,
     val idUsuario: String,
     val nomeCartao: String,
     val nomeUsuario: String,
     @Size(min = 16, max = 16)
-    val numeroCartao: String,
+    var numeroCartao: String = "",
     @Size(min = 3, max = 3)
-    val codigoSeguranca: String,
+    var codigoSeguranca: String = "",
     val agencia: String,
     val conta: String,
-    val limite: BigDecimal,
+    var limite: BigDecimal = BigDecimal.ZERO,
     @Enumerated(EnumType.STRING)
     val bandeira: Bandeira,
     @Enumerated(EnumType.STRING)
