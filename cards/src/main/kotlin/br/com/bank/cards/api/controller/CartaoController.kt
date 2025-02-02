@@ -1,5 +1,6 @@
 package br.com.bank.cards.api.controller
 
+import br.com.bank.cards.api.dto.output.CartaoOutputDTO
 import br.com.bank.cards.api.dto.output.CatalogoCartaoOutputDTO
 import br.com.bank.cards.domain.service.CartaoService
 import br.com.bank.cards.domain.utils.enums.Segmento
@@ -17,5 +18,10 @@ class CartaoController (
     @GetMapping("/segmento/{segmento}")
     fun obterCartoesDisponiveisParaUsuario(@PathVariable segmento: Segmento): List<CatalogoCartaoOutputDTO>{
         return cartaoService.obterCartoesDisponiveisParaUsuario(segmento)
+    }
+
+    @GetMapping("/{id}")
+    fun obterCartoesDisponiveisDoUsuario(@PathVariable id: String): List<CartaoOutputDTO>{
+        return cartaoService.obterCartoesDisponiveisDoUsuario(id)
     }
 }
