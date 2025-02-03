@@ -20,8 +20,9 @@ data class CadastroUsuarioInputDTO(
     val cpf: String,
     @Enumerated(EnumType.STRING)
     val genero: Genero,
+    val cep: String,
     @Positive
     val rendaMensal: BigDecimal,
     val saldoContaCorrente: BigDecimal,
-    val dataNascimento: LocalDateTime
+    val dataNascimento: LocalDateTime,
 )

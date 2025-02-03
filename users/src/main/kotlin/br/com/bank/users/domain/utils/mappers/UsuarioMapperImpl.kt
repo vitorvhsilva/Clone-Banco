@@ -41,7 +41,8 @@ class UsuarioMapperImpl: UsuarioMapper {
             statusUsuario = usuario.statusUsuario,
             rendaMensal = usuario.rendaMensal,
             segmento = usuario.segmento,
-            saldoContaCorrente = usuario.saldoContaCorrente
+            saldoContaCorrente = usuario.saldoContaCorrente,
+            endereco = usuario.endereco
         )
     }
 

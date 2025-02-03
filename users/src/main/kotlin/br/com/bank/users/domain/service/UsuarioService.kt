@@ -1,5 +1,6 @@
 package br.com.bank.users.domain.service
 
+import br.com.bank.users.api.dto.events.EnderecoViaCep
 import br.com.bank.users.api.dto.events.PedidoCartaoCompletoDTO
 import br.com.bank.users.api.dto.events.PedidoCartaoInputDTO
 import br.com.bank.users.api.dto.input.AtualizarUsuarioDTO
@@ -8,9 +9,11 @@ import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
 import br.com.bank.users.api.dto.output.ObterUsuarioDTO
 import br.com.bank.users.api.dto.output.ObterUsuarioDetalhadoDTO
 import br.com.bank.users.api.exception.NotFoundException
+import br.com.bank.users.api.http.ViaCepClient
 import br.com.bank.users.domain.entity.Usuario
 import br.com.bank.users.domain.repository.UsuarioRepository
 import br.com.bank.users.domain.service.strategy.SegmentoStrategy
+import br.com.bank.users.domain.utils.mappers.EnderecoMapper
 import br.com.bank.users.domain.utils.mappers.UsuarioMapper
 import jakarta.transaction.Transactional
 import org.slf4j.Logger
@@ -26,6 +29,8 @@ import kotlin.random.Random
 class UsuarioService (
     private val usuarioRepository: UsuarioRepository,
     private val usuarioMapperImpl: UsuarioMapper,
+    private val enderecoMapperImpl: EnderecoMapper,
+    private val viaCepClient: ViaCepClient,
     private val strategys: List<SegmentoStrategy>,
     private val kafkaTemplate: KafkaTemplate<String, PedidoCartaoCompletoDTO>,
     private val logger: Logger
@@ -35,6 +40,7 @@ class UsuarioService (
 
         injetarAgenciaeConta(usuario)
         injetarSegmento(usuario)
+        injetarEndereco(usuario, dto.cep)
 
         usuario = usuarioRepository.save(usuario)
 
@@ -60,6 +66,17 @@ class UsuarioService (
         strategys.forEach {
                 s -> s.injetarSegmento(usuario)
         }
+    }
+
+    private fun injetarEndereco(usuario: Usuario, cep: String) {
+        var enderecoViaCep: EnderecoViaCep? = null
+        try {
+            enderecoViaCep = viaCepClient.obterEnderecoDoUsuario(cep)
+        } catch (e: Exception) {
+            logger.error("Erro ao obter endereço: ${e.message}")
+        }
+
+        usuario.endereco = enderecoMapperImpl.enderecoParaEntidade(enderecoViaCep!!)
     }
 
     fun obterTodosOsUsuarios(pageable: Pageable): Page<ObterUsuarioDTO> {

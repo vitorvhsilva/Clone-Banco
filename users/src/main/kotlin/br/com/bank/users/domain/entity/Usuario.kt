@@ -19,6 +19,8 @@ data class Usuario(
     val cpf: String,
     @Enumerated(EnumType.STRING)
     var genero: Genero,
+    @Embedded
+    var endereco: Endereco? = null,
     var agencia: String = "",
     var conta: String = "",
     var rendaMensal: BigDecimal,
@@ -28,5 +30,4 @@ data class Usuario(
     var dataCriacaoConta: LocalDateTime,
     @Enumerated(EnumType.STRING)
     var statusUsuario: StatusUsuario
-) {
-}
+)

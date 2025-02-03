@@ -1,5 +1,6 @@
 package br.com.bank.users.api.dto.output
 
+import br.com.bank.users.domain.entity.Endereco
 import br.com.bank.users.domain.utils.enums.Genero
 import br.com.bank.users.domain.utils.enums.Segmento
 import br.com.bank.users.domain.utils.enums.StatusUsuario
@@ -15,6 +16,7 @@ data class CadastroUsuarioOutputDTO(
     val cpf: String,
     @Enumerated(EnumType.STRING)
     val genero: Genero,
+    var endereco: Endereco? = null,
     var agencia: String,
     var conta: String,
     val rendaMensal: BigDecimal,
