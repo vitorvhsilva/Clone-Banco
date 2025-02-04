@@ -1,6 +1,7 @@
 package br.com.bank.cards.api.config
 
 import br.com.bank.cards.api.dto.events.PedidoCartaoCompletoDTO
+import org.apache.commons.lang.mutable.Mutable
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
@@ -16,7 +17,6 @@ import org.springframework.kafka.support.serializer.JsonDeserializer
 class KafkaConfig (
     @Value(value = "\${spring.kafka.bootstrap-servers:localhost:9092}") private val bootstrapAddress: String
 ) {
-
     @Bean
     fun consumerFactory(): ConsumerFactory<String, PedidoCartaoCompletoDTO> {
         val configProps: MutableMap<String, Any> = HashMap()
@@ -38,5 +38,6 @@ class KafkaConfig (
         factory.setConsumerFactory(consumerFactory())
         return factory
     }
+
 
 }
