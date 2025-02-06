@@ -27,7 +27,7 @@ class PedidoCartaoListener (
     private val catalogoRepository: CatalogoCartoesRepository,
     private val strategys: List<LimiteStrategy>
 ) {
-    @KafkaListener(topics = ["pedidos-cartoes-topic"], groupId = "processar-pedido")
+    @KafkaListener(topics = ["pedido-cartoes-topic"], groupId = "pedidos-cartoes-consumer")
     fun processarPedido(dto: PedidoCartaoCompletoDTO) {
         println(dto)
         logger.info("Pedido de cartão de id ${dto.idCartao} para o usuário ${dto.idUsuario} recebido!")

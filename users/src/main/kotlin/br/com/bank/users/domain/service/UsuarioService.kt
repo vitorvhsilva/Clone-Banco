@@ -32,7 +32,7 @@ class UsuarioService (
     private val enderecoMapperImpl: EnderecoMapper,
     private val viaCepClient: ViaCepClient,
     private val strategys: List<SegmentoStrategy>,
-    private val kafkaTemplate: KafkaTemplate<String, PedidoCartaoCompletoDTO>,
+    private val pedidoCartaoKafkaTemplate: KafkaTemplate<String, PedidoCartaoCompletoDTO>,
     private val logger: Logger
 ) {
     fun cadastrarUsuario(dto: CadastroUsuarioInputDTO): ResponseEntity<CadastroUsuarioOutputDTO> {
@@ -120,7 +120,7 @@ class UsuarioService (
             agencia = usuario.agencia
         )
 
-        kafkaTemplate.send("pedidos-cartoes-topic", pedidoCartao.idUsuario, pedidoCartao)
+        pedidoCartaoKafkaTemplate.send("pedido-cartoes-topic", pedidoCartao.idUsuario, pedidoCartao)
         logger.info("Pedido de cartão do usuário ${dto.idUsuario} enviado!")
 
         return ResponseEntity.status(HttpStatus.CREATED).build()
