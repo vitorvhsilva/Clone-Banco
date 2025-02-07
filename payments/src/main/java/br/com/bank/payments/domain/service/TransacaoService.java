@@ -10,10 +10,14 @@ import br.com.bank.payments.domain.utils.enums.StatusTransacao;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -36,5 +40,13 @@ public class TransacaoService {
         log.info("Pedido de pix do usuário " + pixEvent.getIdUsuario() + " feito!");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(pixOutput);
+    }
+
+    public List<PedidoPixOutputDTO> obterPixes(Pageable pageable) {
+        Page<Pix> pixes = pixRepository.findAll(pageable);
+
+        return pixes.stream()
+                .map(p -> modelMapper.map(p, PedidoPixOutputDTO.class))
+                .toList();
     }
 }

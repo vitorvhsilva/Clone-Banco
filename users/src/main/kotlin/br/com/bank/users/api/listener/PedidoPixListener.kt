@@ -1,18 +1,21 @@
 package br.com.bank.users.api.listener
 
 import br.com.bank.users.api.dto.events.PedidoPixEventDTO
+import br.com.bank.users.api.dto.events.PixAceitoEventDTO
 import br.com.bank.users.api.exception.NotFoundException
 import br.com.bank.users.domain.entity.Usuario
 import br.com.bank.users.domain.repository.UsuarioRepository
 import jakarta.transaction.Transactional
 import org.slf4j.Logger
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 
 @Service
 class PedidoPixListener (
     private val usuarioRepository: UsuarioRepository,
-    private val logger: Logger
+    private val logger: Logger,
+    private val pixAceitoKafkaTemplate: KafkaTemplate<String, PixAceitoEventDTO>
 ) {
     @Transactional
     @KafkaListener(topics = ["pedido-pix-topic"], groupId = "pedido-pix-consumer",
@@ -37,5 +40,13 @@ class PedidoPixListener (
         usuarioRecebedor.aumentarSaldo(event.valor)
 
         logger.info("Pix do usuário ${event.idUsuario} para a chave pix ${event.chavePix} feito com sucesso!")
+
+        val pixAceito = PixAceitoEventDTO (
+            idTransacao = event.idTransacao
+        )
+
+        pixAceitoKafkaTemplate.send("pix-aceito-topic", pixAceito.idTransacao, pixAceito)
+
+        logger.info("Mensagem de pix aceito enviada!")
     }
 }

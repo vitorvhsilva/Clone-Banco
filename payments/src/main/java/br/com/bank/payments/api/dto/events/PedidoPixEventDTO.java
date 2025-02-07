@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 @Data
 public class PedidoPixEventDTO {
+    private String idTransacao;
     private String idUsuario;
     private BigDecimal valor;
     private String chavePix;
