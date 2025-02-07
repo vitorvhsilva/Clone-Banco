@@ -3,6 +3,7 @@ package br.com.bank.payments.domain.service;
 import br.com.bank.payments.api.dto.events.PedidoPixEventDTO;
 import br.com.bank.payments.api.dto.input.PedidoPixInputDTO;
 import br.com.bank.payments.api.dto.output.PedidoPixOutputDTO;
+import br.com.bank.payments.api.exception.NotFoundException;
 import br.com.bank.payments.domain.entity.Pix;
 import br.com.bank.payments.domain.repository.CreditoRepository;
 import br.com.bank.payments.domain.repository.PixRepository;
@@ -48,5 +49,11 @@ public class TransacaoService {
         return pixes.stream()
                 .map(p -> modelMapper.map(p, PedidoPixOutputDTO.class))
                 .toList();
+    }
+
+    public ResponseEntity<PedidoPixOutputDTO> obterPixPorId(String id) {
+        Pix pix = pixRepository.findById(id).orElseThrow(() -> new NotFoundException("Pix não encontrado!"));
+
+        return ResponseEntity.ok(modelMapper.map(pix, PedidoPixOutputDTO.class));
     }
 }

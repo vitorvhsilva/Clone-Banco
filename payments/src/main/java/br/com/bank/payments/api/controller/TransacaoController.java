@@ -27,4 +27,8 @@ public class TransacaoController {
         return transacaoService.obterPixes(pageable);
     }
 
+    @GetMapping("/pix/{id}")
+    private ResponseEntity<PedidoPixOutputDTO> obterPixPorId(@PathVariable String id) {
+        return transacaoService.obterPixPorId(id);
+    }
 }
