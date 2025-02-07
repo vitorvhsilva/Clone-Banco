@@ -7,4 +7,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UsuarioRepository: JpaRepository<Usuario, String> {
     fun existsByContaAndAgencia(conta: String, agencia: String): Boolean
+    fun findByEmail(email: String): MutableList<Usuario>
+    fun existsByEmailOrCpf(email: String, cpf: String): Boolean
+    fun findByEmailOrCpf(email: String, cpf: String): MutableList<Usuario>
 }

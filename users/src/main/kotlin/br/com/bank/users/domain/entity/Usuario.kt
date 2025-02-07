@@ -25,9 +25,27 @@ data class Usuario(
     var conta: String = "",
     var rendaMensal: BigDecimal,
     var segmento: Segmento? = null,
-    val saldoContaCorrente: BigDecimal,
+    var saldoContaCorrente: BigDecimal,
     val dataNascimento: LocalDateTime,
     var dataCriacaoConta: LocalDateTime,
     @Enumerated(EnumType.STRING)
     var statusUsuario: StatusUsuario
-)
+) {
+    fun aumentarSaldo(valor: BigDecimal) {
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw IllegalArgumentException("O valor a ser adicionado deve ser maior que zero.")
+        }
+        saldoContaCorrente = saldoContaCorrente.add(valor)
+    }
+
+    fun diminuirSaldo(valor: BigDecimal) {
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw IllegalArgumentException("O valor a ser retirado deve ser maior que zero.")
+        }
+
+        if (valor.compareTo(saldoContaCorrente) > 0) {
+            throw IllegalStateException("Saldo insuficiente para realizar a operação.")
+        }
+        saldoContaCorrente = saldoContaCorrente.subtract(valor)
+    }
+}

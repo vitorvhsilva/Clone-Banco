@@ -3,21 +3,15 @@ package br.com.bank.cards.api.listener
 import br.com.bank.cards.api.dto.events.PedidoCartaoCompletoDTO
 import br.com.bank.cards.api.listener.strategy.LimiteStrategy
 import br.com.bank.cards.domain.entity.Cartao
-import br.com.bank.cards.domain.entity.CatalogoCartoes
 import br.com.bank.cards.domain.repository.CartaoRepository
 import br.com.bank.cards.domain.repository.CatalogoCartoesRepository
-import br.com.bank.cards.domain.utils.enums.Bandeira
-import br.com.bank.cards.domain.utils.enums.Segmento
 import br.com.bank.cards.domain.utils.enums.TipoCartao
 import br.com.bank.users.api.exception.CardAlreadyMadeException
 import br.com.bank.users.api.exception.NotFoundException
 import br.com.bank.users.api.exception.SegmentoNotAllowedException
-import jakarta.persistence.*
-import jakarta.validation.constraints.Size
 import org.slf4j.Logger
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
 import kotlin.random.Random
 
 @Service
@@ -28,33 +22,33 @@ class PedidoCartaoListener (
     private val strategys: List<LimiteStrategy>
 ) {
     @KafkaListener(topics = ["pedido-cartoes-topic"], groupId = "pedidos-cartoes-consumer")
-    fun processarPedido(dto: PedidoCartaoCompletoDTO) {
-        println(dto)
-        logger.info("Pedido de cartão de id ${dto.idCartao} para o usuário ${dto.idUsuario} recebido!")
+    fun processarPedido(event: PedidoCartaoCompletoDTO) {
+        println(event)
+        logger.info("Pedido de cartão de id ${event.idCartao} para o usuário ${event.idUsuario} recebido!")
 
-        val cartaoCatalogo = catalogoRepository.findById(dto.idCartao).orElseThrow({NotFoundException("Cartão não encontrado!")})
+        val cartaoCatalogo = catalogoRepository.findById(event.idCartao).orElseThrow({NotFoundException("Cartão não encontrado!")})
 
-        if (!cartaoCatalogo.segmento.equals(dto.segmento)) {
+        if (!cartaoCatalogo.segmento.equals(event.segmento)) {
             logger.error("Segmento do usuário não permite esse cartão!")
             throw SegmentoNotAllowedException("Segmento do usuário não permite esse cartão!")
         }
 
-        val cartoesDoUsuario = cartaoRepository.findAllByIdUsuario(dto.idUsuario)
+        val cartoesDoUsuario = cartaoRepository.findAllByIdUsuario(event.idUsuario)
 
-        if (!cartoesDoUsuario.none{it.idCatalogo == dto.idCartao}) {
+        if (!cartoesDoUsuario.none{it.idCatalogo == event.idCartao}) {
             logger.error("Esse cartão já foi feito!")
             throw CardAlreadyMadeException("Esse cartão já foi feito!")
         }
 
         val cartao = Cartao (
-            idUsuario = dto.idUsuario,
-            idCatalogo = dto.idCartao,
+            idUsuario = event.idUsuario,
+            idCatalogo = event.idCartao,
             nomeCartao = cartaoCatalogo.nome,
-            nomeUsuario = dto.nomeUsuario,
-            agencia = dto.agencia,
-            conta = dto.conta,
+            nomeUsuario = event.nomeUsuario,
+            agencia = event.agencia,
+            conta = event.conta,
             bandeira = cartaoCatalogo.bandeira,
-            segmento = dto.segmento!!,
+            segmento = event.segmento!!,
             tipoCartao = TipoCartao.CREDITO
         )
 
