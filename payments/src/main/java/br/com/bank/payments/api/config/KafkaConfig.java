@@ -1,5 +1,6 @@
 package br.com.bank.payments.api.config;
 
+import br.com.bank.payments.api.dto.events.PedidoCreditoEventDTO;
 import br.com.bank.payments.api.dto.events.PedidoPixEventDTO;
 import br.com.bank.payments.api.dto.events.PixAceitoEventDTO;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -34,6 +35,20 @@ public class KafkaConfig {
     @Bean
     public KafkaTemplate<String, PedidoPixEventDTO> pixKafkaTemplate() {
         return new KafkaTemplate<>(pixProducerConfig());
+    }
+
+    @Bean
+    public ProducerFactory<String, PedidoCreditoEventDTO> creditoProducerConfig(){
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        return new DefaultKafkaProducerFactory<>(configProps);
+    }
+
+    @Bean
+    public KafkaTemplate<String, PedidoCreditoEventDTO> creditoKafkaTemplate() {
+        return new KafkaTemplate<>(creditoProducerConfig());
     }
 
     @Bean

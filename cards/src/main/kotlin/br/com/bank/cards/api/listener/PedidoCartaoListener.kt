@@ -1,6 +1,6 @@
 package br.com.bank.cards.api.listener
 
-import br.com.bank.cards.api.dto.events.PedidoCartaoCompletoDTO
+import br.com.bank.cards.api.dto.events.PedidoCartaoCompletoEventDTO
 import br.com.bank.cards.api.listener.strategy.LimiteStrategy
 import br.com.bank.cards.domain.entity.Cartao
 import br.com.bank.cards.domain.repository.CartaoRepository
@@ -21,8 +21,9 @@ class PedidoCartaoListener (
     private val catalogoRepository: CatalogoCartoesRepository,
     private val strategys: List<LimiteStrategy>
 ) {
-    @KafkaListener(topics = ["pedido-cartoes-topic"], groupId = "pedidos-cartoes-consumer")
-    fun processarPedido(event: PedidoCartaoCompletoDTO) {
+    @KafkaListener(topics = ["pedido-cartoes-topic"], groupId = "pedidos-cartoes-consumer",
+        containerFactory = "pedidoCartaoContainerFactory")
+    fun processarPedido(event: PedidoCartaoCompletoEventDTO) {
         println(event)
         logger.info("Pedido de cartão de id ${event.idCartao} para o usuário ${event.idUsuario} recebido!")
 

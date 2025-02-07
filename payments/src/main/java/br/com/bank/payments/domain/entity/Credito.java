@@ -16,5 +16,5 @@ public class Credito extends Transacao{
     @Id
     private String idTransacao;
     private Integer qtdParcelas;
-    private String enderecoCredito;
+    private String chaveEstabelecimentoComercial;
 }

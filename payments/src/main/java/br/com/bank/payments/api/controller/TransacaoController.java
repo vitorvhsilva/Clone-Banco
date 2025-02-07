@@ -1,5 +1,7 @@
 package br.com.bank.payments.api.controller;
 
+import br.com.bank.payments.api.dto.input.PedidoCreditoInputDTO;
+import br.com.bank.payments.api.dto.output.PedidoCreditoOutputDTO;
 import br.com.bank.payments.api.dto.input.PedidoPixInputDTO;
 import br.com.bank.payments.api.dto.output.PedidoPixOutputDTO;
 import br.com.bank.payments.domain.service.TransacaoService;
@@ -30,5 +32,10 @@ public class TransacaoController {
     @GetMapping("/pix/{id}")
     private ResponseEntity<PedidoPixOutputDTO> obterPixPorId(@PathVariable String id) {
         return transacaoService.obterPixPorId(id);
+    }
+
+    @PostMapping("/credito")
+    private ResponseEntity<PedidoCreditoOutputDTO> fazerPedidoCredito(@RequestBody PedidoCreditoInputDTO dto) {
+        return transacaoService.fazerPedidoCredito(dto);
     }
 }

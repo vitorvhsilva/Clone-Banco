@@ -1,9 +1,13 @@
 package br.com.bank.payments.domain.service;
 
+import br.com.bank.payments.api.dto.events.PedidoCreditoEventDTO;
 import br.com.bank.payments.api.dto.events.PedidoPixEventDTO;
+import br.com.bank.payments.api.dto.input.PedidoCreditoInputDTO;
 import br.com.bank.payments.api.dto.input.PedidoPixInputDTO;
+import br.com.bank.payments.api.dto.output.PedidoCreditoOutputDTO;
 import br.com.bank.payments.api.dto.output.PedidoPixOutputDTO;
 import br.com.bank.payments.api.exception.NotFoundException;
+import br.com.bank.payments.domain.entity.Credito;
 import br.com.bank.payments.domain.entity.Pix;
 import br.com.bank.payments.domain.repository.CreditoRepository;
 import br.com.bank.payments.domain.repository.PixRepository;
@@ -28,6 +32,7 @@ public class TransacaoService {
     private PixRepository pixRepository;
     private CreditoRepository creditoRepository;
     private KafkaTemplate<String, PedidoPixEventDTO> pedidoPixKafkaTemplate;
+    private KafkaTemplate<String, PedidoCreditoEventDTO> pedidoCreditoKafkaTemplate;
 
     public ResponseEntity<PedidoPixOutputDTO> fazerPedidoPix(PedidoPixInputDTO dto) {
         Pix pix = modelMapper.map(dto, Pix.class);
@@ -55,5 +60,18 @@ public class TransacaoService {
         Pix pix = pixRepository.findById(id).orElseThrow(() -> new NotFoundException("Pix não encontrado!"));
 
         return ResponseEntity.ok(modelMapper.map(pix, PedidoPixOutputDTO.class));
+    }
+
+    public ResponseEntity<PedidoCreditoOutputDTO> fazerPedidoCredito(PedidoCreditoInputDTO dto) {
+        Credito credito = modelMapper.map(dto, Credito.class);
+        credito.setStatus(StatusTransacao.EM_PROCESSAMENTO);
+
+        PedidoCreditoOutputDTO creditoOutput = modelMapper.map(creditoRepository.save(credito), PedidoCreditoOutputDTO.class);
+        PedidoCreditoEventDTO creditoEvent = modelMapper.map(creditoOutput, PedidoCreditoEventDTO.class);
+
+        pedidoCreditoKafkaTemplate.send("pedido-credito-topic", creditoEvent.getIdUsuario(), creditoEvent);
+        log.info("Pedido de credito do usuário " + creditoEvent.getIdUsuario() + " feito!");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(creditoOutput);
     }
 }
