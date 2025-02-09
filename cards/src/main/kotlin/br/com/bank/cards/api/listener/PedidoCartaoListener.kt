@@ -1,7 +1,7 @@
 package br.com.bank.cards.api.listener
 
 import br.com.bank.cards.api.dto.events.PedidoCartaoCompletoEventDTO
-import br.com.bank.cards.api.listener.strategy.LimiteStrategy
+import br.com.bank.cards.api.listener.strategy.cartao.LimiteStrategy
 import br.com.bank.cards.domain.entity.Cartao
 import br.com.bank.cards.domain.repository.CartaoRepository
 import br.com.bank.cards.domain.repository.CatalogoCartoesRepository
@@ -24,7 +24,6 @@ class PedidoCartaoListener (
     @KafkaListener(topics = ["pedido-cartoes-topic"], groupId = "pedidos-cartoes-consumer",
         containerFactory = "pedidoCartaoContainerFactory")
     fun processarPedido(event: PedidoCartaoCompletoEventDTO) {
-        println(event)
         logger.info("Pedido de cartão de id ${event.idCartao} para o usuário ${event.idUsuario} recebido!")
 
         val cartaoCatalogo = catalogoRepository.findById(event.idCartao).orElseThrow({NotFoundException("Cartão não encontrado!")})
@@ -50,7 +49,8 @@ class PedidoCartaoListener (
             conta = event.conta,
             bandeira = cartaoCatalogo.bandeira,
             segmento = event.segmento!!,
-            tipoCartao = TipoCartao.CREDITO
+            tipoCartao = TipoCartao.CREDITO,
+            faturas = emptyList()
         )
 
         injetarNumeroECodSeguranca(cartao)

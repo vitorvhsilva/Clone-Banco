@@ -12,7 +12,7 @@ import java.util.UUID
 @Table(name = "tb_cartoes")
 data class Cartao (
     @Id @GeneratedValue(strategy = GenerationType.UUID)
-    val idCartao: UUID? = null,
+    val idCartao: String? = null,
     val idUsuario: String,
     val idCatalogo: Long,
     val nomeCartao: String,
@@ -29,5 +29,7 @@ data class Cartao (
     @Enumerated(EnumType.STRING)
     val segmento: Segmento,
     @Enumerated(EnumType.STRING)
-    val tipoCartao: TipoCartao
+    val tipoCartao: TipoCartao,
+    @OneToMany
+    val faturas: List<Fatura>
 )

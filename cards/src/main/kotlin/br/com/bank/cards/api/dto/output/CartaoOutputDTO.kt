@@ -9,7 +9,7 @@ import java.math.BigDecimal
 import java.util.*
 
 data class CartaoOutputDTO(
-    val idCartao: UUID? = null,
+    val idCartao: String? = null,
     val idUsuario: String,
     val nomeCartao: String,
     val nomeUsuario: String,

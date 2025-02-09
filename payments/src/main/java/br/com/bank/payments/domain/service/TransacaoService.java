@@ -72,6 +72,7 @@ public class TransacaoService {
         pedidoCreditoKafkaTemplate.send("pedido-credito-topic", creditoEvent.getIdUsuario(), creditoEvent);
         log.info("Pedido de credito do usuário " + creditoEvent.getIdUsuario() + " feito!");
 
+
         return ResponseEntity.status(HttpStatus.CREATED).body(creditoOutput);
     }
 }

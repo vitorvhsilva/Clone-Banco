@@ -5,6 +5,7 @@ import java.math.BigDecimal
 data class PedidoCreditoEventDTO  (
     val idTransacao: String,
     val idUsuario: String,
+    val idCartao: String,
     val valor: BigDecimal,
     val qtdParcelas: Int,
     val chaveEstabelecimentoComercial: String

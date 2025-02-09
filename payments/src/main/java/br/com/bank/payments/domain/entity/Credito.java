@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Credito extends Transacao{
     @Id
     private String idTransacao;
+    private String idCartao;
     private Integer qtdParcelas;
     private String chaveEstabelecimentoComercial;
 }

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 public class PedidoCreditoEventDTO {
     private String idTransacao;
     private String idUsuario;
+    private String idCartao;
     private BigDecimal valor;
     private Integer qtdParcelas;
     private String chaveEstabelecimentoComercial;

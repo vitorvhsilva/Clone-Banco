@@ -1,4 +1,4 @@
-package br.com.bank.cards.api.listener.strategy
+package br.com.bank.cards.api.listener.strategy.cartao
 
 import br.com.bank.cards.domain.entity.Cartao
 import br.com.bank.cards.domain.utils.enums.Segmento
