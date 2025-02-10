@@ -1,5 +1,6 @@
 package br.com.bank.cards.domain.entity
 
+import br.com.bank.cards.domain.utils.enums.StatusFatura
 import jakarta.persistence.*
 import java.math.BigDecimal
 
@@ -7,10 +8,12 @@ import java.math.BigDecimal
 @Table(name = "tb_fatura")
 data class Fatura(
     @Id @GeneratedValue(strategy = GenerationType.UUID)
-    val id: String? = null,
+    val idFatura: String? = null,
     @ManyToOne @JoinColumn(name = "id_cartao")
     val cartao: Cartao,
     var valorFatura: BigDecimal,
     @Column(unique = true)
     val mesAnoFatura: String,
+    @Enumerated(EnumType.STRING)
+    val status: StatusFatura
 )

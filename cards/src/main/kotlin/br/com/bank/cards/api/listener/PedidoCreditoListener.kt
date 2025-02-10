@@ -6,6 +6,7 @@ import br.com.bank.cards.domain.entity.Cartao
 import br.com.bank.cards.domain.entity.Fatura
 import br.com.bank.cards.domain.repository.CartaoRepository
 import br.com.bank.cards.domain.repository.FaturaRepository
+import br.com.bank.cards.domain.utils.enums.StatusFatura
 import br.com.bank.users.api.exception.NotFoundException
 import jakarta.persistence.*
 import jakarta.transaction.Transactional
@@ -71,7 +72,8 @@ class PedidoCreditoListener(
         val fatura = Fatura (
             cartao = cartao,
             valorFatura = valorFatura,
-            mesAnoFatura = mesAnoAtual
+            mesAnoFatura = mesAnoAtual,
+            status = StatusFatura.ABERTA
         )
 
         faturaRepository.save(fatura)

@@ -26,9 +26,10 @@ CREATE TABLE tb_cartoes (
 );
 
 CREATE TABLE tb_fatura (
-    id VARCHAR(255) PRIMARY KEY,
+    id_fatura VARCHAR(255) PRIMARY KEY,
     id_cartao VARCHAR(255) NOT NULL,
     valor_fatura DECIMAL(19, 2) NOT NULL,
     mes_ano_fatura VARCHAR(255) NOT NULL UNIQUE,
+    status VARCHAR(255) NOT NULL,
     FOREIGN KEY (id_cartao) REFERENCES tb_cartoes(id_cartao)
 );

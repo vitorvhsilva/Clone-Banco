@@ -6,4 +6,5 @@ import java.util.Optional
 
 interface FaturaRepository: JpaRepository<Fatura, String> {
     fun findByMesAnoFatura(mesAnoFatura: String): Optional<Fatura>
+    fun findAllByCartaoIdCartao(idCartao: String): List<Fatura>
 }
