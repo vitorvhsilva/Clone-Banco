@@ -24,4 +24,5 @@ class CartaoController (
     fun obterCartoesDisponiveisDoUsuario(@PathVariable id: String): List<CartaoOutputDTO>{
         return cartaoService.obterCartoesDisponiveisDoUsuario(id)
     }
+    
 }

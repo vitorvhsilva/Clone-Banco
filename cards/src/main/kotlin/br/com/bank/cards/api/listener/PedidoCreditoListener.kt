@@ -8,9 +8,11 @@ import br.com.bank.cards.domain.repository.CartaoRepository
 import br.com.bank.cards.domain.repository.FaturaRepository
 import br.com.bank.users.api.exception.NotFoundException
 import jakarta.persistence.*
+import jakarta.transaction.Transactional
 import org.slf4j.Logger
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -20,6 +22,7 @@ class PedidoCreditoListener(
     private val cartaoRepository: CartaoRepository,
     private val faturaRepository: FaturaRepository
 ) {
+    @Transactional
     @KafkaListener(topics = ["pedido-credito-topic"], groupId = "pedido-credito-consumer",
         containerFactory = "pedidoCreditoContainerFactory")
     fun processarPedidoCredito(event: PedidoCreditoEventDTO) {
@@ -30,31 +33,53 @@ class PedidoCreditoListener(
             throw LimitException("Valor do crédito maior que o limite!")
         }
 
-        val mesAnoAtual = LocalDate.now().format(DateTimeFormatter.ofPattern("MM/yyyy"))
+        cartao.limite -= event.valor // descontando o valor no limite
 
-        val fatura = faturaRepository.findByMesAnoFatura(mesAnoAtual)
+        val valorFatura = event.valor / event.qtdParcelas.toBigDecimal()
 
-        if (fatura.isPresent) {
-            // consolidarFatura(fatura.get())
-        } else {
-            criarFatura(cartao, event, mesAnoAtual)
+        val mesesFatura: ArrayList<String> = ArrayList()
+
+        for (num in 0..<event.qtdParcelas) {
+            val mesAnoFatura = LocalDate.now().plusMonths(num.toLong()).format(DateTimeFormatter.ofPattern("MM/yyyy"))
+            mesesFatura.add(mesAnoFatura)
         }
 
+        for (mesFatura in mesesFatura) {
+            val fatura = faturaRepository.findByMesAnoFatura(mesFatura)
+
+            if (fatura.isPresent) {
+                consolidarFatura(fatura.get(), event, mesFatura, valorFatura)
+            } else {
+                criarFatura(cartao, event, mesFatura, valorFatura)
+            }
+        }
+
+        logger.info("Pedido de crédito processado!")
     }
 
-    private fun consolidarFatura (fatura: Fatura, event: PedidoCreditoEventDTO) {
+    private fun consolidarFatura (fatura: Fatura, event: PedidoCreditoEventDTO, mesAnoAtual: String, valorFatura: BigDecimal) {
+        fatura.valorFatura += valorFatura
 
+        logger.info("""
+            Fatura consolidada! 
+            idUsuário: ${event.idUsuario}
+            idCartão: ${fatura.cartao.idCartao}
+            MêsAno: ${mesAnoAtual}""")
     }
 
-    private fun criarFatura(cartao: Cartao, event: PedidoCreditoEventDTO, mesAnoAtual: String) {
+    private fun criarFatura(cartao: Cartao, event: PedidoCreditoEventDTO, mesAnoAtual: String, valorFatura: BigDecimal) {
         val fatura = Fatura (
             cartao = cartao,
-            valorFatura = event.valor,
+            valorFatura = valorFatura,
             mesAnoFatura = mesAnoAtual
         )
 
         faturaRepository.save(fatura)
 
-        logger.info("Fatura para usuário de id ${event.idUsuario} o mês ${mesAnoAtual} criada!")
+        logger.info("""
+            Fatura criada! 
+            idUsuário: ${event.idUsuario}
+            idCartão: ${fatura.cartao.idCartao}
+            MêsAno: ${mesAnoAtual}""")
     }
 }

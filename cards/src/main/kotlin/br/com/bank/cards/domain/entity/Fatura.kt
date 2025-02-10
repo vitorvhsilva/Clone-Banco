@@ -10,7 +10,7 @@ data class Fatura(
     val id: String? = null,
     @ManyToOne @JoinColumn(name = "id_cartao")
     val cartao: Cartao,
-    val valorFatura: BigDecimal,
+    var valorFatura: BigDecimal,
     @Column(unique = true)
-    val mesAnoFatura: String
+    val mesAnoFatura: String,
 )
