@@ -70,8 +70,8 @@ class PedidoCreditoListener(
 
         val respostaCredito = RespostaCreditoEventDTO (
             idTransacao = event.idTransacao,
-            status = StatusResposta.INVALIDO,
-            mensagem = "O pix credito aceito com sucesso!"
+            status = StatusResposta.VALIDO,
+            mensagem = "O credito foi aceito com sucesso!"
         )
 
         respostaCreditoKafkaTemplate.send("resposta-credito-topic", respostaCredito.idTransacao, respostaCredito)

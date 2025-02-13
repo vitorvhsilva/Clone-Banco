@@ -2,6 +2,7 @@ package br.com.bank.payments.api.config;
 
 import br.com.bank.payments.api.dto.events.PedidoCreditoEventDTO;
 import br.com.bank.payments.api.dto.events.PedidoPixEventDTO;
+import br.com.bank.payments.api.dto.events.RespostaCreditoEventDTO;
 import br.com.bank.payments.api.dto.events.RespostaPixEventDTO;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -68,6 +69,26 @@ public class KafkaConfig {
         ConcurrentKafkaListenerContainerFactory<String, RespostaPixEventDTO> containerFactory
                 = new ConcurrentKafkaListenerContainerFactory<>();
         containerFactory.setConsumerFactory(respostaPixConsumerFactory());
+        return containerFactory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, RespostaCreditoEventDTO> respostaCreditoConsumerFactory() {
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        configProps.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
+        configProps.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "br.com.bank.payments.api.dto.events.RespostaCreditoEventDTO");
+        configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        return new DefaultKafkaConsumerFactory<>(configProps);
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, RespostaCreditoEventDTO> respostaCreditoContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, RespostaCreditoEventDTO> containerFactory
+                = new ConcurrentKafkaListenerContainerFactory<>();
+        containerFactory.setConsumerFactory(respostaCreditoConsumerFactory());
         return containerFactory;
     }
 }

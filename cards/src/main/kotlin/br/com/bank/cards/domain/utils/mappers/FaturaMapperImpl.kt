@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 class FaturaMapperImpl: FaturaMapper {
     override fun entidadeParaOutput(fatura: Fatura): FaturaOutputDTO {
         return FaturaOutputDTO (
-            id = fatura.idFatura,
+            idFatura = fatura.idFatura,
             valorFatura = fatura.valorFatura,
             mesAnoFatura = fatura.mesAnoFatura,
             status = fatura.status

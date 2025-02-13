@@ -44,7 +44,7 @@ class CartaoService(
     }
 
     fun obterFaturaDoCartao(id: String): List<FaturaOutputDTO> {
-        val faturas = faturaRepository.findAllByCartaoIdCartao(id)
+        val faturas = faturaRepository.findAllByCartao_IdCartao(id)
 
         return faturas.map {f -> faturaMapper.entidadeParaOutput(f)}
     }
