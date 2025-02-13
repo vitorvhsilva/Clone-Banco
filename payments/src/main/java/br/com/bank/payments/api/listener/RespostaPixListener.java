@@ -1,8 +1,9 @@
 package br.com.bank.payments.api.listener;
 
-import br.com.bank.payments.api.dto.events.PixAceitoEventDTO;
+import br.com.bank.payments.api.dto.events.RespostaPixEventDTO;
 import br.com.bank.payments.domain.entity.Pix;
 import br.com.bank.payments.domain.repository.PixRepository;
+import br.com.bank.payments.domain.utils.enums.StatusResposta;
 import br.com.bank.payments.domain.utils.enums.StatusTransacao;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +13,22 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @AllArgsConstructor
-public class PixAceitoListener {
+public class RespostaPixListener {
 
     private PixRepository pixRepository;
 
-    @KafkaListener(topics = "pix-aceito-topic", groupId = "pix-aceito-consumer", containerFactory = "pixAceitoContainerFactory")
-    public void processarPixAceito(PixAceitoEventDTO event) {
+    @KafkaListener(topics = "resposta-pix-topic", groupId = "resposta-pix-consumer", containerFactory = "respostaPixContainerFactory")
+    public void processarPix(RespostaPixEventDTO event) {
         Pix pix = pixRepository.findById(event.getIdTransacao()).get();
+
+        if (event.getStatus().equals(StatusResposta.INVALIDO)) {
+            log.error("Pix de id " + event.getIdTransacao() + " voltou com erro!, a mensagem de erro foi: " + event.getMensagem());
+
+            pix.setStatus(StatusTransacao.INVALIDA);
+            pixRepository.save(pix);
+
+            return;
+        }
 
         pix.setStatus(StatusTransacao.VALIDA);
         pixRepository.save(pix);

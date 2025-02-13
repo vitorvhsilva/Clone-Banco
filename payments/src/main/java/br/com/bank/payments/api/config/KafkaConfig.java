@@ -2,7 +2,7 @@ package br.com.bank.payments.api.config;
 
 import br.com.bank.payments.api.dto.events.PedidoCreditoEventDTO;
 import br.com.bank.payments.api.dto.events.PedidoPixEventDTO;
-import br.com.bank.payments.api.dto.events.PixAceitoEventDTO;
+import br.com.bank.payments.api.dto.events.RespostaPixEventDTO;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -52,22 +52,22 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, PixAceitoEventDTO> pixAceitoConsumerFactory() {
+    public ConsumerFactory<String, RespostaPixEventDTO> respostaPixConsumerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         configProps.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
-        configProps.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "br.com.bank.payments.api.dto.events.PixAceitoEventDTO");
+        configProps.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "br.com.bank.payments.api.dto.events.RespostaPixEventDTO");
         configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         return new DefaultKafkaConsumerFactory<>(configProps);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, PixAceitoEventDTO> pixAceitoContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, PixAceitoEventDTO> containerFactory
+    public ConcurrentKafkaListenerContainerFactory<String, RespostaPixEventDTO> respostaPixContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, RespostaPixEventDTO> containerFactory
                 = new ConcurrentKafkaListenerContainerFactory<>();
-        containerFactory.setConsumerFactory(pixAceitoConsumerFactory());
+        containerFactory.setConsumerFactory(respostaPixConsumerFactory());
         return containerFactory;
     }
 }

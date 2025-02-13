@@ -2,7 +2,7 @@ package br.com.bank.users.api.config
 
 import br.com.bank.users.api.dto.events.PedidoCartaoCompletoDTO
 import br.com.bank.users.api.dto.events.PedidoPixEventDTO
-import br.com.bank.users.api.dto.events.PixAceitoEventDTO
+import br.com.bank.users.api.dto.events.RespostaPixEventDTO
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -35,17 +35,17 @@ class KafkaConfig (
     }
 
     @Bean
-    fun pixAceitoProducerFactory(): ProducerFactory<String, PixAceitoEventDTO> {
+    fun respostaPixProducerFactory(): ProducerFactory<String, RespostaPixEventDTO> {
         val configProps: MutableMap<String, Any> = HashMap()
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress)
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java)
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer::class.java)
-        return DefaultKafkaProducerFactory<String, PixAceitoEventDTO>(configProps)
+        return DefaultKafkaProducerFactory<String, RespostaPixEventDTO>(configProps)
     }
 
     @Bean
-    fun pixAceitoKafkaTemplate(): KafkaTemplate<String, PixAceitoEventDTO> {
-        return KafkaTemplate<String, PixAceitoEventDTO>(pixAceitoProducerFactory())
+    fun respostaPixKafkaTemplate(): KafkaTemplate<String, RespostaPixEventDTO> {
+        return KafkaTemplate<String, RespostaPixEventDTO>(respostaPixProducerFactory())
     }
 
     @Bean
