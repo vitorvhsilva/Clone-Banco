@@ -1,17 +1,20 @@
 package br.com.bank.cards.api.listener
 
 import br.com.bank.cards.api.dto.events.PedidoCreditoEventDTO
+import br.com.bank.cards.api.dto.events.RespostaCreditoEventDTO
 import br.com.bank.cards.api.exception.LimitException
 import br.com.bank.cards.domain.entity.Cartao
 import br.com.bank.cards.domain.entity.Fatura
 import br.com.bank.cards.domain.repository.CartaoRepository
 import br.com.bank.cards.domain.repository.FaturaRepository
 import br.com.bank.cards.domain.utils.enums.StatusFatura
+import br.com.bank.cards.domain.utils.enums.StatusResposta
 import br.com.bank.users.api.exception.NotFoundException
 import jakarta.persistence.*
 import jakarta.transaction.Transactional
 import org.slf4j.Logger
 import org.springframework.kafka.annotation.KafkaListener
+import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -21,7 +24,8 @@ import java.time.format.DateTimeFormatter
 class PedidoCreditoListener(
     private val logger: Logger,
     private val cartaoRepository: CartaoRepository,
-    private val faturaRepository: FaturaRepository
+    private val faturaRepository: FaturaRepository,
+    private val respostaCreditoKafkaTemplate: KafkaTemplate<String, RespostaCreditoEventDTO>
 ) {
     @Transactional
     @KafkaListener(topics = ["pedido-credito-topic"], groupId = "pedido-credito-consumer",
@@ -31,7 +35,16 @@ class PedidoCreditoListener(
 
         if (event.valor > cartao.limite) {
             logger.error("Valor do crédito maior que o limite!")
-            throw LimitException("Valor do crédito maior que o limite!")
+
+            val respostaCredito = RespostaCreditoEventDTO (
+                idTransacao = event.idTransacao,
+                status = StatusResposta.INVALIDO,
+                mensagem = "Valor do crédito maior que o limite!"
+            )
+
+            respostaCreditoKafkaTemplate.send("resposta-credito-topic", respostaCredito.idTransacao, respostaCredito)
+
+            return
         }
 
         cartao.limite -= event.valor // descontando o valor no limite
@@ -55,6 +68,13 @@ class PedidoCreditoListener(
             }
         }
 
+        val respostaCredito = RespostaCreditoEventDTO (
+            idTransacao = event.idTransacao,
+            status = StatusResposta.INVALIDO,
+            mensagem = "O pix credito aceito com sucesso!"
+        )
+
+        respostaCreditoKafkaTemplate.send("resposta-credito-topic", respostaCredito.idTransacao, respostaCredito)
         logger.info("Pedido de crédito processado!")
     }
 

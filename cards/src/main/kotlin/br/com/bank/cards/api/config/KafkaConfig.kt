@@ -2,16 +2,19 @@ package br.com.bank.cards.api.config
 
 import br.com.bank.cards.api.dto.events.PedidoCartaoCompletoEventDTO
 import br.com.bank.cards.api.dto.events.PedidoCreditoEventDTO
+import br.com.bank.cards.api.dto.events.RespostaCreditoEventDTO
 import org.apache.kafka.clients.consumer.ConsumerConfig
+import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
-import org.springframework.kafka.core.ConsumerFactory
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory
+import org.springframework.kafka.core.*
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
 import org.springframework.kafka.support.serializer.JsonDeserializer
+import org.springframework.kafka.support.serializer.JsonSerializer
 
 @Configuration
 class KafkaConfig (
@@ -59,6 +62,20 @@ class KafkaConfig (
             ConcurrentKafkaListenerContainerFactory<String, PedidoCreditoEventDTO>()
         factory.setConsumerFactory(pedidoCreditoConsumerFactory())
         return factory
+    }
+
+    @Bean
+    fun respostaCreditoProducerFactory(): ProducerFactory<String, RespostaCreditoEventDTO> {
+        val configProps: MutableMap<String, Any> = HashMap()
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress)
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java)
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer::class.java)
+        return DefaultKafkaProducerFactory<String, RespostaCreditoEventDTO>(configProps)
+    }
+
+    @Bean
+    fun respostaCreditoKafkaTemplate(): KafkaTemplate<String, RespostaCreditoEventDTO> {
+        return KafkaTemplate<String, RespostaCreditoEventDTO>(respostaCreditoProducerFactory())
     }
 
 }
