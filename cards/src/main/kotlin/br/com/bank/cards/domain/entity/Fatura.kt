@@ -15,5 +15,5 @@ data class Fatura(
     @Column(unique = true)
     val mesAnoFatura: String,
     @Enumerated(EnumType.STRING)
-    val status: StatusFatura
+    var status: StatusFatura
 )

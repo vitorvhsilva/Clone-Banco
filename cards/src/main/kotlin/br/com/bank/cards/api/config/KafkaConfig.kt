@@ -1,5 +1,6 @@
 package br.com.bank.cards.api.config
 
+import br.com.bank.cards.api.dto.events.PagarFaturaEventDTO
 import br.com.bank.cards.api.dto.events.PedidoCartaoCompletoEventDTO
 import br.com.bank.cards.api.dto.events.PedidoCreditoEventDTO
 import br.com.bank.cards.api.dto.events.RespostaCreditoEventDTO
@@ -20,6 +21,20 @@ import org.springframework.kafka.support.serializer.JsonSerializer
 class KafkaConfig (
     @Value(value = "\${spring.kafka.bootstrap-servers:localhost:9092}") private val bootstrapAddress: String
 ) {
+    @Bean
+    fun respostaCreditoProducerFactory(): ProducerFactory<String, RespostaCreditoEventDTO> {
+        val configProps: MutableMap<String, Any> = HashMap()
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress)
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java)
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer::class.java)
+        return DefaultKafkaProducerFactory<String, RespostaCreditoEventDTO>(configProps)
+    }
+
+    @Bean
+    fun respostaCreditoKafkaTemplate(): KafkaTemplate<String, RespostaCreditoEventDTO> {
+        return KafkaTemplate<String, RespostaCreditoEventDTO>(respostaCreditoProducerFactory())
+    }
+
     @Bean
     fun pedidoCartaoConsumerFactory(): ConsumerFactory<String, PedidoCartaoCompletoEventDTO> {
         val configProps: MutableMap<String, Any> = HashMap()
@@ -65,17 +80,25 @@ class KafkaConfig (
     }
 
     @Bean
-    fun respostaCreditoProducerFactory(): ProducerFactory<String, RespostaCreditoEventDTO> {
+    fun pagarFaturaConsumerFactory(): ConsumerFactory<String, PagarFaturaEventDTO> {
         val configProps: MutableMap<String, Any> = HashMap()
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress)
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java)
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer::class.java)
-        return DefaultKafkaProducerFactory<String, RespostaCreditoEventDTO>(configProps)
+        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress)
+        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer::class.java)
+        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer::class.java)
+        configProps.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
+        configProps.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer::class.java)
+        configProps.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false)
+        configProps.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "br.com.bank.cards.api.dto.events.PagarFaturaEventDTO")
+        configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*")
+        return DefaultKafkaConsumerFactory<String, PagarFaturaEventDTO>(configProps)
     }
 
     @Bean
-    fun respostaCreditoKafkaTemplate(): KafkaTemplate<String, RespostaCreditoEventDTO> {
-        return KafkaTemplate<String, RespostaCreditoEventDTO>(respostaCreditoProducerFactory())
+    fun pagarFaturaContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, PagarFaturaEventDTO> {
+        val factory: ConcurrentKafkaListenerContainerFactory<String, PagarFaturaEventDTO> =
+            ConcurrentKafkaListenerContainerFactory<String, PagarFaturaEventDTO>()
+        factory.setConsumerFactory(pagarFaturaConsumerFactory())
+        return factory
     }
 
 }

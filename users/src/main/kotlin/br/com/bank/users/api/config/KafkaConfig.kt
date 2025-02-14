@@ -1,5 +1,6 @@
 package br.com.bank.users.api.config
 
+import br.com.bank.users.api.dto.events.PagarFaturaEventDTO
 import br.com.bank.users.api.dto.events.PedidoCartaoCompletoDTO
 import br.com.bank.users.api.dto.events.PedidoPixEventDTO
 import br.com.bank.users.api.dto.events.RespostaPixEventDTO
@@ -46,6 +47,20 @@ class KafkaConfig (
     @Bean
     fun respostaPixKafkaTemplate(): KafkaTemplate<String, RespostaPixEventDTO> {
         return KafkaTemplate<String, RespostaPixEventDTO>(respostaPixProducerFactory())
+    }
+
+    @Bean
+    fun pagarFaturaProducerFactory(): ProducerFactory<String, PagarFaturaEventDTO> {
+        val configProps: MutableMap<String, Any> = HashMap()
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress)
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java)
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer::class.java)
+        return DefaultKafkaProducerFactory<String, PagarFaturaEventDTO>(configProps)
+    }
+
+    @Bean
+    fun pagarFaturaKafkaTemplate(): KafkaTemplate<String, PagarFaturaEventDTO> {
+        return KafkaTemplate<String, PagarFaturaEventDTO>(pagarFaturaProducerFactory())
     }
 
     @Bean

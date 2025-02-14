@@ -1,10 +1,12 @@
 package br.com.bank.users.domain.service
 
 import br.com.bank.users.api.dto.events.EnderecoViaCep
+import br.com.bank.users.api.dto.events.PagarFaturaEventDTO
 import br.com.bank.users.api.dto.events.PedidoCartaoCompletoDTO
 import br.com.bank.users.api.dto.input.PedidoCartaoInputDTO
 import br.com.bank.users.api.dto.input.AtualizarUsuarioDTO
 import br.com.bank.users.api.dto.input.CadastroUsuarioInputDTO
+import br.com.bank.users.api.dto.input.PagarFaturaInputDTO
 import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
 import br.com.bank.users.api.dto.output.ObterUsuarioDTO
 import br.com.bank.users.api.dto.output.ObterUsuarioDetalhadoDTO
@@ -13,6 +15,7 @@ import br.com.bank.users.api.http.ViaCepClient
 import br.com.bank.users.domain.entity.Usuario
 import br.com.bank.users.domain.repository.UsuarioRepository
 import br.com.bank.users.domain.service.strategy.SegmentoStrategy
+import br.com.bank.users.domain.utils.enums.StatusTransacao
 import br.com.bank.users.domain.utils.mappers.EnderecoMapper
 import br.com.bank.users.domain.utils.mappers.UsuarioMapper
 import jakarta.transaction.Transactional
@@ -31,8 +34,9 @@ class UsuarioService (
     private val usuarioMapperImpl: UsuarioMapper,
     private val enderecoMapperImpl: EnderecoMapper,
     private val viaCepClient: ViaCepClient,
-    private val strategys: List<SegmentoStrategy>,
+    private val segmentoStrategys: List<SegmentoStrategy>,
     private val pedidoCartaoKafkaTemplate: KafkaTemplate<String, PedidoCartaoCompletoDTO>,
+    private val pagarFaturaKafkaTemplate: KafkaTemplate<String, PagarFaturaEventDTO>,
     private val logger: Logger
 ) {
     fun cadastrarUsuario(dto: CadastroUsuarioInputDTO): ResponseEntity<CadastroUsuarioOutputDTO> {
@@ -63,7 +67,7 @@ class UsuarioService (
     }
 
     private fun injetarSegmento(usuario: Usuario) {
-        strategys.forEach {
+        segmentoStrategys.forEach {
                 s -> s.injetarSegmento(usuario)
         }
     }
@@ -133,6 +137,24 @@ class UsuarioService (
         logger.info("Pedido de cartão do usuário ${dto.idUsuario} enviado!")
 
         return ResponseEntity.status(HttpStatus.CREATED).build()
+    }
+
+    fun pagarFaturaDoCartao(dto: PagarFaturaInputDTO): PagarFaturaEventDTO {
+        val usuario = usuarioRepository.findById(dto.idUsuario).orElseThrow({NotFoundException("Usuário não encontrado!")})
+
+        val pagarFatura = PagarFaturaEventDTO(
+            idUsuario = dto.idUsuario,
+            valorFatura = dto.valorFatura,
+            mesAnoFatura = dto.mesAnoFatura,
+            status = StatusTransacao.EM_PROCESSAMENTO
+        )
+
+        usuario.diminuirSaldo(pagarFatura.valorFatura)
+
+        pagarFaturaKafkaTemplate.send("pedido-fatura-topic", pagarFatura.idUsuario, pagarFatura)
+        logger.info("Pedido de pagamento de fatura do usuário ${dto.idUsuario} enviado!")
+
+        return pagarFatura
     }
 
 }
