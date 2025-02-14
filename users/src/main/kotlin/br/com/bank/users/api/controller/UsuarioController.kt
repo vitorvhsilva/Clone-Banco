@@ -1,6 +1,6 @@
 package br.com.bank.users.api.controller
 
-import br.com.bank.users.api.dto.events.PedidoCartaoInputDTO
+import br.com.bank.users.api.dto.input.PedidoCartaoInputDTO
 import br.com.bank.users.api.dto.input.AtualizarUsuarioDTO
 import br.com.bank.users.api.dto.input.CadastroUsuarioInputDTO
 import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
@@ -38,8 +38,18 @@ class UsuarioController(
         return usuarioService.atualizarUsuario(dto)
     }
 
+    @PutMapping("/{id}")
+    fun usuarioReceberSalario(@PathVariable id: String): ObterUsuarioDTO {
+        return usuarioService.usuarioReceberSalario(id)
+    }
+
     @PostMapping("/cartoes")
     fun fazerPedidoDeCartao(@RequestBody dto: PedidoCartaoInputDTO): ResponseEntity<Void>{
         return usuarioService.fazerPedidoDeCartao(dto)
     }
+
+//    @PostMapping("/faturas")
+//    fun pagarFaturaDoCartao(@RequestBody dto: PedidoCartaoInputDTO): ResponseEntity<Void>{
+//        return usuarioService.pagarFaturaDoCartao(dto)
+//    }
 }

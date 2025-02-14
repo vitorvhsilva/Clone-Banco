@@ -2,7 +2,7 @@ package br.com.bank.users.domain.service
 
 import br.com.bank.users.api.dto.events.EnderecoViaCep
 import br.com.bank.users.api.dto.events.PedidoCartaoCompletoDTO
-import br.com.bank.users.api.dto.events.PedidoCartaoInputDTO
+import br.com.bank.users.api.dto.input.PedidoCartaoInputDTO
 import br.com.bank.users.api.dto.input.AtualizarUsuarioDTO
 import br.com.bank.users.api.dto.input.CadastroUsuarioInputDTO
 import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
@@ -106,6 +106,15 @@ class UsuarioService (
         injetarSegmento(usuario)
 
         return usuarioMapperImpl.entidadeParaObterUsuarioDetalhado(usuario)
+    }
+
+    @Transactional
+    fun usuarioReceberSalario(id: String): ObterUsuarioDTO {
+        val usuario = usuarioRepository.findById(id).orElseThrow({NotFoundException("Usuário não encontrado!")})
+
+        usuario.saldoContaCorrente += usuario.rendaMensal
+
+        return usuarioMapperImpl.entidadeParaObterUsuario(usuario)
     }
 
     fun fazerPedidoDeCartao(dto: PedidoCartaoInputDTO): ResponseEntity<Void> {

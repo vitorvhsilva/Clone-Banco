@@ -1,4 +1,4 @@
-package br.com.bank.users.api.dto.events
+package br.com.bank.users.api.dto.input
 
 data class PedidoCartaoInputDTO (
     val idCartao: Long,

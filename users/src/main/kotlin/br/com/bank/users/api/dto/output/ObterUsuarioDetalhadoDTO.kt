@@ -1,6 +1,5 @@
 package br.com.bank.users.api.dto.output
 
-import br.com.bank.users.api.dto.events.CartaoOutputDTO
 import br.com.bank.users.domain.utils.enums.Genero
 import br.com.bank.users.domain.utils.enums.Segmento
 import br.com.bank.users.domain.utils.enums.StatusUsuario
