@@ -12,9 +12,8 @@ import br.com.bank.payments.domain.entity.Pix;
 import br.com.bank.payments.domain.repository.CreditoRepository;
 import br.com.bank.payments.domain.repository.PixRepository;
 import br.com.bank.payments.domain.utils.enums.StatusTransacao;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -25,14 +24,23 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
-@Slf4j
 public class TransacaoService {
-    private ModelMapper modelMapper;
-    private PixRepository pixRepository;
-    private CreditoRepository creditoRepository;
-    private KafkaTemplate<String, PedidoPixEventDTO> pedidoPixKafkaTemplate;
-    private KafkaTemplate<String, PedidoCreditoEventDTO> pedidoCreditoKafkaTemplate;
+    private final ModelMapper modelMapper;
+    private final Logger log;
+    private final PixRepository pixRepository;
+    private final CreditoRepository creditoRepository;
+    private final KafkaTemplate<String, PedidoPixEventDTO> pedidoPixKafkaTemplate;
+    private final KafkaTemplate<String, PedidoCreditoEventDTO> pedidoCreditoKafkaTemplate;
+
+    public TransacaoService(ModelMapper modelMapper, Logger log, PixRepository pixRepository, CreditoRepository creditoRepository,
+                            KafkaTemplate<String, PedidoPixEventDTO> pedidoPixKafkaTemplate, KafkaTemplate<String, PedidoCreditoEventDTO> pedidoCreditoKafkaTemplate) {
+        this.modelMapper = modelMapper;
+        this.log = log;
+        this.pixRepository = pixRepository;
+        this.creditoRepository = creditoRepository;
+        this.pedidoPixKafkaTemplate = pedidoPixKafkaTemplate;
+        this.pedidoCreditoKafkaTemplate = pedidoCreditoKafkaTemplate;
+    }
 
     public ResponseEntity<PedidoPixOutputDTO> fazerPedidoPix(PedidoPixInputDTO dto) {
         Pix pix = modelMapper.map(dto, Pix.class);
@@ -42,8 +50,8 @@ public class TransacaoService {
         PedidoPixOutputDTO pixOutput = modelMapper.map(pixRepository.save(pix), PedidoPixOutputDTO.class);
         PedidoPixEventDTO pixEvent = modelMapper.map(pixOutput, PedidoPixEventDTO.class);
 
-        pedidoPixKafkaTemplate.send("pedido-pix-topic", pixEvent.getIdUsuario(), pixEvent);
-        log.info("Pedido de pix do usuário " + pixEvent.getIdUsuario() + " feito!");
+        pedidoPixKafkaTemplate.send("pedido-pix-topic", pixEvent.idUsuario(), pixEvent);
+        log.info("Pedido de pix do usuário " + pixEvent.idUsuario() + " feito!");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(pixOutput);
     }
@@ -69,8 +77,8 @@ public class TransacaoService {
         PedidoCreditoOutputDTO creditoOutput = modelMapper.map(creditoRepository.save(credito), PedidoCreditoOutputDTO.class);
         PedidoCreditoEventDTO creditoEvent = modelMapper.map(creditoOutput, PedidoCreditoEventDTO.class);
 
-        pedidoCreditoKafkaTemplate.send("pedido-credito-topic", creditoEvent.getIdUsuario(), creditoEvent);
-        log.info("Pedido de credito do usuário " + creditoEvent.getIdUsuario() + " feito!");
+        pedidoCreditoKafkaTemplate.send("pedido-credito-topic", creditoEvent.idUsuario(), creditoEvent);
+        log.info("Pedido de credito do usuário " + creditoEvent.idUsuario() + " feito!");
 
 
         return ResponseEntity.status(HttpStatus.CREATED).body(creditoOutput);

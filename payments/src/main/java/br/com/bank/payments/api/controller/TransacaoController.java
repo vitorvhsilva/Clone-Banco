@@ -1,12 +1,11 @@
 package br.com.bank.payments.api.controller;
 
 import br.com.bank.payments.api.dto.input.PedidoCreditoInputDTO;
-import br.com.bank.payments.api.dto.output.PedidoCreditoOutputDTO;
 import br.com.bank.payments.api.dto.input.PedidoPixInputDTO;
+import br.com.bank.payments.api.dto.output.PedidoCreditoOutputDTO;
 import br.com.bank.payments.api.dto.output.PedidoPixOutputDTO;
 import br.com.bank.payments.domain.service.TransacaoService;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +14,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("transacoes")
-@AllArgsConstructor
 public class TransacaoController {
 
-    private TransacaoService transacaoService;
+    public TransacaoController(TransacaoService transacaoService) {
+        this.transacaoService = transacaoService;
+    }
+
+    private final TransacaoService transacaoService;
 
     @PostMapping("/pix") @Operation(description = "Faz um pedido de pix para o serviço de usuários")
     private ResponseEntity<PedidoPixOutputDTO> fazerPedidoPix(@RequestBody PedidoPixInputDTO dto) {

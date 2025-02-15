@@ -2,16 +2,14 @@ package br.com.bank.payments.api.dto.input;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
 import java.math.BigDecimal;
 
-@Data
-public class PedidoPixInputDTO {
+public record PedidoPixInputDTO (
     @NotBlank
-    private String idUsuario;
+    String idUsuari,
     @NotNull
-    private BigDecimal valor;
+    BigDecimal valor,
     @NotBlank
-    private String chavePix;
-}
+    String chavePix
+) {}
