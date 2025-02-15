@@ -5,6 +5,7 @@ import br.com.bank.payments.api.dto.output.PedidoCreditoOutputDTO;
 import br.com.bank.payments.api.dto.input.PedidoPixInputDTO;
 import br.com.bank.payments.api.dto.output.PedidoPixOutputDTO;
 import br.com.bank.payments.domain.service.TransacaoService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,23 +20,33 @@ public class TransacaoController {
 
     private TransacaoService transacaoService;
 
-    @PostMapping("/pix")
+    @PostMapping("/pix") @Operation(description = "Faz um pedido de pix para o serviço de usuários")
     private ResponseEntity<PedidoPixOutputDTO> fazerPedidoPix(@RequestBody PedidoPixInputDTO dto) {
         return transacaoService.fazerPedidoPix(dto);
     }
 
-    @GetMapping("/pix")
+    @GetMapping("/pix") @Operation(description = "Obtem todos os pix já feitos")
     private List<PedidoPixOutputDTO> obterPixes(Pageable pageable) {
         return transacaoService.obterPixes(pageable);
     }
 
-    @GetMapping("/pix/{id}")
+    @GetMapping("/pix/{id}") @Operation(description = "Obtem o pix pelo id")
     private ResponseEntity<PedidoPixOutputDTO> obterPixPorId(@PathVariable String id) {
         return transacaoService.obterPixPorId(id);
     }
 
-    @PostMapping("/credito")
+    @PostMapping("/creditos") @Operation(description = "Faz um pedido de crédito para o serviço de cartões")
     private ResponseEntity<PedidoCreditoOutputDTO> fazerPedidoCredito(@RequestBody PedidoCreditoInputDTO dto) {
         return transacaoService.fazerPedidoCredito(dto);
+    }
+
+    @GetMapping("/creditos") @Operation(description = "Obtem todos os créditos feitos")
+    private List<PedidoCreditoOutputDTO> obterCreditos(Pageable pageable) {
+        return transacaoService.obterCreditos(pageable);
+    }
+
+    @GetMapping("/creditos/{id}") @Operation(description = "Obtem o crédito pelo id")
+    private ResponseEntity<PedidoCreditoOutputDTO> obterCreditoPeloId(@PathVariable String id) {
+        return transacaoService.obterCreditoPeloId(id);
     }
 }

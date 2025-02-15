@@ -75,4 +75,18 @@ public class TransacaoService {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(creditoOutput);
     }
+
+    public List<PedidoCreditoOutputDTO> obterCreditos(Pageable pageable) {
+        Page<Credito> creditos = creditoRepository.findAll(pageable);
+
+        return creditos.stream()
+                .map(c -> modelMapper.map(c, PedidoCreditoOutputDTO.class))
+                .toList();
+    }
+
+    public ResponseEntity<PedidoCreditoOutputDTO> obterCreditoPeloId(String id) {
+        Credito credito = creditoRepository.findById(id).orElseThrow(() -> new NotFoundException("Crédito não encontrado!"));
+
+        return ResponseEntity.ok(modelMapper.map(credito, PedidoCreditoOutputDTO.class));
+    }
 }
