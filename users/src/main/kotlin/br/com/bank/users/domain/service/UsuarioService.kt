@@ -144,14 +144,16 @@ class UsuarioService (
 
         val pagarFatura = PagarFaturaEventDTO(
             idUsuario = dto.idUsuario,
+            idCartao = dto.idCartao,
             valorFatura = dto.valorFatura,
             mesAnoFatura = dto.mesAnoFatura,
-            status = StatusTransacao.EM_PROCESSAMENTO
+            status = StatusTransacao.EM_PROCESSAMENTO,
+            mensagem = ""
         )
 
         usuario.diminuirSaldo(pagarFatura.valorFatura)
 
-        pagarFaturaKafkaTemplate.send("pedido-fatura-topic", pagarFatura.idUsuario, pagarFatura)
+        pagarFaturaKafkaTemplate.send("pagar-fatura-topic", pagarFatura.idUsuario, pagarFatura)
         logger.info("Pedido de pagamento de fatura do usuário ${dto.idUsuario} enviado!")
 
         return pagarFatura

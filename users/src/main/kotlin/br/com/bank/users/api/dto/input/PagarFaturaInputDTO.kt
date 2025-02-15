@@ -7,6 +7,8 @@ import java.math.BigDecimal
 data class PagarFaturaInputDTO (
     @NotBlank
     val idUsuario: String,
+    @NotBlank
+    val idCartao: String,
     @NotNull
     val valorFatura: BigDecimal,
     @NotBlank

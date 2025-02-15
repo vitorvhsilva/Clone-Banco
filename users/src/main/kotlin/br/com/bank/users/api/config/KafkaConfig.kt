@@ -84,4 +84,26 @@ class KafkaConfig (
         factory.setConsumerFactory(pedidoPixConsumerFactory())
         return factory
     }
+
+    @Bean
+    fun respostaFaturaConsumerFactory(): ConsumerFactory<String, PagarFaturaEventDTO> {
+        val configProps: MutableMap<String, Any> = HashMap()
+        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress)
+        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer::class.java)
+        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer::class.java)
+        configProps.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer::class.java)
+        configProps.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer::class.java)
+        configProps.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false)
+        configProps.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "br.com.bank.users.api.dto.events.PagarFaturaEventDTO")
+        configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*")
+        return DefaultKafkaConsumerFactory<String, PagarFaturaEventDTO>(configProps)
+    }
+
+    @Bean
+    fun respostaFaturaContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, PagarFaturaEventDTO> {
+        val factory: ConcurrentKafkaListenerContainerFactory<String, PagarFaturaEventDTO> =
+            ConcurrentKafkaListenerContainerFactory<String, PagarFaturaEventDTO>()
+        factory.setConsumerFactory(respostaFaturaConsumerFactory())
+        return factory
+    }
 }

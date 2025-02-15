@@ -101,4 +101,18 @@ class KafkaConfig (
         return factory
     }
 
+    @Bean
+    fun respostaFaturaProducerFactory(): ProducerFactory<String, PagarFaturaEventDTO> {
+        val configProps: MutableMap<String, Any> = HashMap()
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress)
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java)
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer::class.java)
+        return DefaultKafkaProducerFactory<String, PagarFaturaEventDTO>(configProps)
+    }
+
+    @Bean
+    fun respostaFaturaKafkaTemplate(): KafkaTemplate<String, PagarFaturaEventDTO> {
+        return KafkaTemplate<String, PagarFaturaEventDTO>(respostaFaturaProducerFactory())
+    }
+
 }

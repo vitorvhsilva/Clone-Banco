@@ -5,7 +5,9 @@ import java.math.BigDecimal
 
 data class PagarFaturaEventDTO(
     val idUsuario: String,
+    val idCartao: String,
     val valorFatura: BigDecimal,
     val mesAnoFatura: String,
-    val status: StatusTransacao
+    var status: StatusTransacao,
+    var mensagem: String
 )
