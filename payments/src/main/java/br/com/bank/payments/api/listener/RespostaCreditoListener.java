@@ -22,10 +22,10 @@ public class RespostaCreditoListener {
 
     @KafkaListener(topics = "resposta-credito-topic", groupId = "resposta-credito-consumer", containerFactory = "respostaCreditoContainerFactory")
     public void processarCredito(RespostaCreditoEventDTO event) {
-        Credito credito = creditoRepository.findById(event.idTransacao()).get();
+        Credito credito = creditoRepository.findById(event.getIdTransacao()).get();
 
-        if (event.status().equals(StatusResposta.INVALIDO)) {
-            log.error("Credito de id " + event.idTransacao() + " voltou com erro!, a mensagem de erro foi: " + event.mensagem());
+        if (event.getStatus().equals(StatusResposta.INVALIDO)) {
+            log.error("Credito de id " + event.getIdTransacao() + " voltou com erro!, a mensagem de erro foi: " + event.getMensagem());
 
             credito.setStatus(StatusTransacao.INVALIDA);
             creditoRepository.save(credito);

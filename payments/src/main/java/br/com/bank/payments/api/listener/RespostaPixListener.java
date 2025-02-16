@@ -22,10 +22,10 @@ public class RespostaPixListener {
 
     @KafkaListener(topics = "resposta-pix-topic", groupId = "resposta-pix-consumer", containerFactory = "respostaPixContainerFactory")
     public void processarPix(RespostaPixEventDTO event) {
-        Pix pix = pixRepository.findById(event.idTransacao()).get();
+        Pix pix = pixRepository.findById(event.getIdTransacao()).get();
 
-        if (event.status().equals(StatusResposta.INVALIDO)) {
-            log.error("Pix de id " + event.idTransacao() + " voltou com erro!, a mensagem de erro foi: " + event.mensagem());
+        if (event.getStatus().equals(StatusResposta.INVALIDO)) {
+            log.error("Pix de id " + event.getIdTransacao() + " voltou com erro!, a mensagem de erro foi: " + event.getMensagem());
 
             pix.setStatus(StatusTransacao.INVALIDA);
             pixRepository.save(pix);

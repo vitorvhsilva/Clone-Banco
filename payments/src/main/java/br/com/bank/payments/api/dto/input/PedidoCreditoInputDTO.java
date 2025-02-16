@@ -6,15 +6,66 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 
-public record PedidoCreditoInputDTO (
+public class PedidoCreditoInputDTO {
     @NotBlank
-    String idUsuario,
+    private String idUsuario;
     @NotBlank
-    String idCartao,
+    private String idCartao;
     @NotNull
-    BigDecimal valor,
+    private BigDecimal valor;
     @NotNull
-    Integer qtdParcelas,
+    private Integer qtdParcelas;
     @NotBlank
-    String chaveEstabelecimentoComercial
-) {}
+    private String chaveEstabelecimentoComercial;
+
+    public PedidoCreditoInputDTO(String idUsuario, String idCartao, BigDecimal valor, Integer qtdParcelas, String chaveEstabelecimentoComercial) {
+        this.idUsuario = idUsuario;
+        this.idCartao = idCartao;
+        this.valor = valor;
+        this.qtdParcelas = qtdParcelas;
+        this.chaveEstabelecimentoComercial = chaveEstabelecimentoComercial;
+    }
+
+    public PedidoCreditoInputDTO() {
+    }
+
+    public String getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(String idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public String getIdCartao() {
+        return idCartao;
+    }
+
+    public void setIdCartao(String idCartao) {
+        this.idCartao = idCartao;
+    }
+
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
+
+    public Integer getQtdParcelas() {
+        return qtdParcelas;
+    }
+
+    public void setQtdParcelas(Integer qtdParcelas) {
+        this.qtdParcelas = qtdParcelas;
+    }
+
+    public String getChaveEstabelecimentoComercial() {
+        return chaveEstabelecimentoComercial;
+    }
+
+    public void setChaveEstabelecimentoComercial(String chaveEstabelecimentoComercial) {
+        this.chaveEstabelecimentoComercial = chaveEstabelecimentoComercial;
+    }
+}

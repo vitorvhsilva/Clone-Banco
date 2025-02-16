@@ -50,8 +50,8 @@ public class TransacaoService {
         PedidoPixOutputDTO pixOutput = modelMapper.map(pixRepository.save(pix), PedidoPixOutputDTO.class);
         PedidoPixEventDTO pixEvent = modelMapper.map(pixOutput, PedidoPixEventDTO.class);
 
-        pedidoPixKafkaTemplate.send("pedido-pix-topic", pixEvent.idUsuario(), pixEvent);
-        log.info("Pedido de pix do usuário " + pixEvent.idUsuario() + " feito!");
+        pedidoPixKafkaTemplate.send("pedido-pix-topic", pixEvent.getIdUsuario(), pixEvent);
+        log.info("Pedido de pix do usuário " + pixEvent.getIdUsuario() + " feito!");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(pixOutput);
     }
@@ -77,8 +77,8 @@ public class TransacaoService {
         PedidoCreditoOutputDTO creditoOutput = modelMapper.map(creditoRepository.save(credito), PedidoCreditoOutputDTO.class);
         PedidoCreditoEventDTO creditoEvent = modelMapper.map(creditoOutput, PedidoCreditoEventDTO.class);
 
-        pedidoCreditoKafkaTemplate.send("pedido-credito-topic", creditoEvent.idUsuario(), creditoEvent);
-        log.info("Pedido de credito do usuário " + creditoEvent.idUsuario() + " feito!");
+        pedidoCreditoKafkaTemplate.send("pedido-credito-topic", creditoEvent.getIdUsuario(), creditoEvent);
+        log.info("Pedido de credito do usuário " + creditoEvent.getIdUsuario() + " feito!");
 
 
         return ResponseEntity.status(HttpStatus.CREATED).body(creditoOutput);
