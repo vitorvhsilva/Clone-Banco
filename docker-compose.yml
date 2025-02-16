@@ -19,21 +19,84 @@ services:
         ports: 
             - "8081:8081"
         depends_on:
-            - db_postgres
+            - db_postgres_1
             - gateway
         environment:
-            - spring.datasource.url=jdbc:postgresql://db_postgres:5432/postgres    
+            - spring.datasource.url=jdbc:postgresql://db_postgres_1:5432/postgres    
             - spring.datasource.username=postgres
             - spring.datasource.password=root
             - eureka.client.serviceUrl.defaultZone=http://server:8761/eureka
-    db_postgres:
-        container_name: db_postgres
+    ms-cards:
+        container_name: ms-cards
+        image: cards
+        ports: 
+            - "8082:8082"
+        depends_on:
+            - db_postgres_2
+            - gateway
+        environment:
+            - spring.datasource.url=jdbc:postgresql://db_postgres_2:5433/postgres    
+            - spring.datasource.username=postgres
+            - spring.datasource.password=root
+            - eureka.client.serviceUrl.defaultZone=http://server:8761/eureka
+    ms-payments:
+        container_name: ms-payments
+        image: payments
+        ports: 
+            - "8083:8083"
+        depends_on:
+            - mongodb
+            - gateway
+        environment:
+            - eureka.client.serviceUrl.defaultZone=http://server:8761/eureka
+            - spring.data.mongodb.host=mongodb
+            - spring.data.mongodb.port=27017
+            - spring.data.mongodb.username=admin
+            - spring.data.mongodb.password=admin
+            - spring.data.mongodb.database=payments
+            - spring.data.mongodb.authentication-database=admin
+            - spring.data.mongodb.auto-index-creation=true
+
+    db_postgres_1:
+        container_name: db_postgres_1
         image: postgres:latest
         restart: always
         environment:
             POSTGRES_USER: postgres 
             POSTGRES_PASSWORD: root 
         ports:
-            - "54321:5432" 
+            - "54440:5432"
+    db_postgres_2:
+        container_name: db_postgres_2
+        image: postgres:latest
+        restart: always
+        environment:
+            POSTGRES_USER: postgres 
+            POSTGRES_PASSWORD: root 
+            POSTGRES_PORT: 5433
+        ports:
+            - "54442:5433"
+    mongodb:
+        container_name: mongodb
+        image: mongo
+        ports:
+            - "27017:27017"
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=admin
+            - MONGO_INITDB_ROOT_PASSWORD=admin
+
+    zookeeper:
+        container_name: zookeeper
+        image: wurstmeister/zookeeper
+        ports:
+            - "2181:2181"
+    kafka:
+        container_name: kafka
+        image: wurstmeister/kafka
+        ports:
+            - "9092:9092"
+        environment:
+            KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
 
     
