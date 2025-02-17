@@ -12,14 +12,23 @@ Este projeto visa simular um banco fícticio e suas funcionalidades mais utiliza
 
 Além disso, existe o serviço de API Gateway e Service Discovery, que agem em conjunto para criar um ponto de centralização de envio de requisição para os serviços, sendo possível criar uma arquitetura escalável e resiliente.
 
-## Como rodar a Aplicação
+## Como Rodar a Aplicação
 
+## 
+
+## Links da Aplicação
+Com a aplicação rodando no seu ambiente Docker, é possível acessar alguns links úteis da aplicação:
+
+- Eureka Server (Reconhecimento centralizado dos serviços): <a>http://localhost:8761/</a>
+- Documentação da API de Usuários: <a>http://localhost:8081/swagger-ui/index.html</a>
+- Documentação da API de Cartões: <a>http://localhost:8082/swagger-ui/index.html</a>
+- Documentação da API de Pagamentos: <a>http://localhost:8083/swagger-ui/index.html</a>
 
 ## Tecnologias e Dependências Utilizadas
 - Kotlin
 - Java
 - Spring Framework (Web, MVC, JPA, Validation, Feign, Eureka Server, Eureka Client, Gateway)
-- Kafka
+- Kafka e Zookeeper
 - Docker
 - PostgreSQL
 - MongoDB
