@@ -32,18 +32,18 @@ data class Usuario(
     var statusUsuario: StatusUsuario
 ) {
     fun aumentarSaldo(valor: BigDecimal) {
-        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+        if (valor <= BigDecimal.ZERO) {
             throw IllegalArgumentException("O valor a ser adicionado deve ser maior que zero.")
         }
         saldoContaCorrente = saldoContaCorrente.add(valor)
     }
 
     fun diminuirSaldo(valor: BigDecimal) {
-        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+        if (valor <= BigDecimal.ZERO) {
             throw IllegalArgumentException("O valor a ser retirado deve ser maior que zero.")
         }
 
-        if (valor.compareTo(saldoContaCorrente) > 0) {
+        if (valor > saldoContaCorrente) {
             throw IllegalStateException("Saldo insuficiente para realizar a operação.")
         }
         saldoContaCorrente = saldoContaCorrente.subtract(valor)
