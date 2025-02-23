@@ -8,6 +8,7 @@ import br.com.bank.users.api.dto.input.PagarFaturaInputDTO
 import br.com.bank.users.api.dto.input.PedidoCartaoInputDTO
 import br.com.bank.users.api.dto.output.CadastroUsuarioOutputDTO
 import br.com.bank.users.api.dto.output.ObterUsuarioDetalhadoDTO
+import br.com.bank.users.api.exception.NotFoundException
 import br.com.bank.users.api.http.ViaCepClient
 import br.com.bank.users.domain.entity.Endereco
 import br.com.bank.users.domain.entity.Usuario
@@ -127,6 +128,21 @@ class UsuarioControllerTest {
         ).andReturn().response
 
         Assertions.assertEquals(200, response.status)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun `Deve retornar codigo 400 para quando o usuario nao existe por id`() {
+        val id = UUID.randomUUID().toString()
+
+        `when`(usuarioService.obterUsuarioPorId(id))
+            .thenThrow(NotFoundException("Usuário não encontrado!"))
+
+        val response = mockMvc.perform(
+            MockMvcRequestBuilders.get("/usuarios/$id")
+        ).andReturn().response
+
+        Assertions.assertEquals(400, response.status)
     }
 
     @Test
