@@ -20,4 +20,10 @@ class ExceptionsHandler {
         val errorResponse = ErrorDTO(error = HttpStatus.BAD_REQUEST.name, message = e.message)
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
     }
+
+    @ExceptionHandler(CepInvalidoException::class)
+    fun handleCepInvalidoException(e: CepInvalidoException): ResponseEntity<ErrorDTO> {
+        val errorResponse = ErrorDTO(error = HttpStatus.BAD_REQUEST.name, message = e.message)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse)
+    }
 }
