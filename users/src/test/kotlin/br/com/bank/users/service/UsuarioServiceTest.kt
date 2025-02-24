@@ -225,7 +225,7 @@ class UsuarioServiceTest {
     }
 
     @Test
-    fun `obterTodosOsUsuarios deve retornar pagina de DTOs`() {
+    fun `Obter todos os usuarios deve retornar pagina de DTOs`() {
         val page = PageImpl(listOf(usuario))
         `when`( usuarioRepository.findAll(any<Pageable>())).thenReturn(page)
         `when`( usuarioMapper.entidadeParaObterUsuario(usuario)).thenReturn(obterUsuarioDTO)
@@ -236,7 +236,7 @@ class UsuarioServiceTest {
     }
 
     @Test
-    fun `obterUsuarioPorId deve lancar excecao quando nao encontrado`() {
+    fun `Obter usuario por id deve lancar excecao quando nao encontrado`() {
         `when` ( usuarioRepository.findById(usuarioId) ).thenReturn(Optional.empty())
 
         assertThrows<NotFoundException> {
@@ -245,7 +245,7 @@ class UsuarioServiceTest {
     }
 
     @Test
-    fun `atualizarUsuario deve atualizar campos corretamente`() {
+    fun `Atualizar usuario deve atualizar campos corretamente`() {
         val dto = atualizarUsuarioDTO
         `when` ( usuarioRepository.findById(usuarioId) ).thenReturn(Optional.of(usuario))
         `when` ( usuarioMapper.entidadeParaObterUsuarioDetalhado(usuario) ).thenReturn(ObterUsuarioDetalhadoDTO(
@@ -273,7 +273,7 @@ class UsuarioServiceTest {
     }
 
     @Test
-    fun `usuarioReceberSalario deve adicionar renda mensal ao saldo`() {
+    fun `Usuario receber salario deve adicionar renda mensal ao saldo`() {
         usuario.rendaMensal = BigDecimal.valueOf(1000)
         usuario.saldoContaCorrente = BigDecimal.ZERO
         `when` ( usuarioRepository.findById(usuarioId) ).thenReturn(Optional.of(usuario))
@@ -286,7 +286,7 @@ class UsuarioServiceTest {
     }
 
     @Test
-    fun `fazerPedidoDeCartao deve enviar mensagem Kafka`() {
+    fun `Fazer pedido de cartao deve enviar mensagem Kafka`() {
         val dto = PedidoCartaoInputDTO(idUsuario = usuarioId, idCartao = 3)
         `when` (usuarioRepository.findById(usuarioId) ).thenReturn(Optional.of(usuario))
 
@@ -297,7 +297,7 @@ class UsuarioServiceTest {
     }
 
     @Test
-    fun `pagarFaturaDoCartao deve diminuir saldo e enviar mensagem`() {
+    fun `Pagar fatura do cartao deve diminuir saldo e enviar mensagem`() {
         val dto = PagarFaturaInputDTO(
             idUsuario = usuarioId,
             valorFatura = BigDecimal.valueOf(500),

@@ -16,7 +16,7 @@ class RespostaFaturaListener (
     @Transactional
     @KafkaListener(topics = ["resposta-fatura-topic"], groupId = "resposta-fatura-consumer",
         containerFactory = "respostaFaturaContainerFactory")
-    fun processarPix(event: PagarFaturaEventDTO) {
+    fun processarPagamentoFatura(event: PagarFaturaEventDTO) {
         val usuario = usuarioRepository.findById(event.idUsuario).get()
 
         logger.info("Resposta de fatura do usuário ${event.idUsuario} para o mês ${event.mesAnoFatura} recebido!")
