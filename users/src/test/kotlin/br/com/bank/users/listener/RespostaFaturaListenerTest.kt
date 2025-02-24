@@ -97,7 +97,7 @@ class RespostaFaturaListenerTest {
         verify(logger, times(1)).info("Resposta de fatura do usuário ${event.idUsuario} para o mês ${event.mesAnoFatura} recebido!")
         verify(logger, times(1)).error("Erro ao pagar a fatura, a mensagem foi ${event.mensagem}")
         verify(logger, never()).info("Fatura do usuário ${event.idUsuario} para o mês ${event.mesAnoFatura} paga com sucesso!")
-        assertEquals(BigDecimal(100), usuario.saldoContaCorrente) // Verifica se o saldo foi aumentado
+        assertEquals(BigDecimal(100), usuario.saldoContaCorrente)
     }
 
     @Test
