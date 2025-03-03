@@ -3,6 +3,8 @@ package br.com.bank.cards.domain.service
 import br.com.bank.cards.api.dto.output.CartaoOutputDTO
 import br.com.bank.cards.api.dto.output.CatalogoCartaoOutputDTO
 import br.com.bank.cards.api.dto.output.FaturaOutputDTO
+import br.com.bank.cards.api.listener.strategy.cartao.LimiteStrategy
+import br.com.bank.cards.domain.entity.Cartao
 import br.com.bank.cards.domain.entity.CatalogoCartoes
 import br.com.bank.cards.domain.repository.CartaoRepository
 import br.com.bank.cards.domain.repository.CatalogoCartoesRepository
@@ -12,6 +14,7 @@ import br.com.bank.cards.domain.utils.mappers.CartaoMapper
 import br.com.bank.cards.domain.utils.mappers.CatalogoCartaoMapper
 import br.com.bank.cards.domain.utils.mappers.FaturaMapper
 import org.springframework.stereotype.Service
+import kotlin.random.Random
 
 @Service
 class CartaoService(
