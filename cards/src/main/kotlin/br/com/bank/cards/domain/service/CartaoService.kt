@@ -40,7 +40,6 @@ class CartaoService(
         val cartoes = cartaoRepository.findAllByIdUsuario(id)
 
         return cartoes.map {c -> cartaoMapper.entidadeParaOutput(c)}
-
     }
 
     fun obterFaturaDoCartao(id: String): List<FaturaOutputDTO> {
