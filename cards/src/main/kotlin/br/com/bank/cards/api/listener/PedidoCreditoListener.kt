@@ -2,7 +2,6 @@ package br.com.bank.cards.api.listener
 
 import br.com.bank.cards.api.dto.events.PedidoCreditoEventDTO
 import br.com.bank.cards.api.dto.events.RespostaCreditoEventDTO
-import br.com.bank.cards.api.exception.LimitException
 import br.com.bank.cards.domain.entity.Cartao
 import br.com.bank.cards.domain.entity.Fatura
 import br.com.bank.cards.domain.repository.CartaoRepository
@@ -10,7 +9,6 @@ import br.com.bank.cards.domain.repository.FaturaRepository
 import br.com.bank.cards.domain.utils.enums.StatusFatura
 import br.com.bank.cards.domain.utils.enums.StatusResposta
 import br.com.bank.users.api.exception.NotFoundException
-import jakarta.persistence.*
 import jakarta.transaction.Transactional
 import org.slf4j.Logger
 import org.springframework.kafka.annotation.KafkaListener
