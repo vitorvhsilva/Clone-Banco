@@ -1,4 +1,4 @@
-# Projeto que faz a Simulação de um Banco 
+# Simulação de um Banco 
 ## Arquitetura do Projeto
 <div>
   <img src="https://github.com/vitorvhsilva/Clone-Banco/blob/main/assets/arquitetura_banco.png">
@@ -29,6 +29,7 @@ Com a aplicação rodando no seu ambiente Docker, é possível acessar alguns li
 - Java
 - Spring Framework (Web, MVC, JPA, Validation, Feign, Eureka Server, Eureka Client, Gateway)
 - Kafka e Zookeeper
+- JUnit + Mockito 
 - Docker
 - PostgreSQL
 - MongoDB
