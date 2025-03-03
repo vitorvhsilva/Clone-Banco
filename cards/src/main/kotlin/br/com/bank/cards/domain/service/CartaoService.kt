@@ -23,7 +23,8 @@ class CartaoService(
     private val faturaMapper: FaturaMapper,
     private val catalogoRepository: CatalogoCartoesRepository,
     private val cartaoRepository: CartaoRepository,
-    private val faturaRepository: FaturaRepository
+    private val faturaRepository: FaturaRepository,
+    private val strategys: List<LimiteStrategy>
 ) {
     fun obterCartoesDisponiveisParaSegmento(segmento: Segmento): List<CatalogoCartaoOutputDTO> {
         val cartoes: List<CatalogoCartoes> = catalogoRepository.findAllBySegmento(segmento)
@@ -49,6 +50,24 @@ class CartaoService(
         val faturas = faturaRepository.findAllByCartao_IdCartao(id)
 
         return faturas.map {f -> faturaMapper.entidadeParaOutput(f)}
+    }
+
+    fun injetarNumeroECodSeguranca(cartao: Cartao) {
+        var numeroCartao: String
+        var codigoSeguranca: String
+
+
+        do {
+            numeroCartao = (1..16).joinToString("") { Random.nextInt(10).toString() }
+            codigoSeguranca = Random.nextInt(1000).toString().padStart(3, '0')
+        } while (cartaoRepository.existsByNumeroCartao(numeroCartao))
+
+        cartao.numeroCartao = numeroCartao
+        cartao.codigoSeguranca = codigoSeguranca
+    }
+
+    fun injetarLimite(cartao: Cartao) {
+        strategys.forEach{ s -> s.definirLimite(cartao) }
     }
 
 }

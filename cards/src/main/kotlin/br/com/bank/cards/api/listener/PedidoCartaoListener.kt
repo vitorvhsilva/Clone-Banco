@@ -5,6 +5,7 @@ import br.com.bank.cards.api.listener.strategy.cartao.LimiteStrategy
 import br.com.bank.cards.domain.entity.Cartao
 import br.com.bank.cards.domain.repository.CartaoRepository
 import br.com.bank.cards.domain.repository.CatalogoCartoesRepository
+import br.com.bank.cards.domain.service.CartaoService
 import br.com.bank.cards.domain.utils.enums.TipoCartao
 import br.com.bank.users.api.exception.CardAlreadyMadeException
 import br.com.bank.users.api.exception.NotFoundException
@@ -19,7 +20,7 @@ class PedidoCartaoListener (
     private val logger: Logger,
     private val cartaoRepository: CartaoRepository,
     private val catalogoRepository: CatalogoCartoesRepository,
-    private val strategys: List<LimiteStrategy>
+    private val cartaoService: CartaoService
 ) {
     @KafkaListener(topics = ["pedido-cartoes-topic"], groupId = "pedidos-cartoes-consumer",
         containerFactory = "pedidoCartaoContainerFactory")
@@ -53,28 +54,10 @@ class PedidoCartaoListener (
             faturas = emptyList()
         )
 
-        injetarNumeroECodSeguranca(cartao)
-        injetarLimite(cartao)
+        cartaoService.injetarNumeroECodSeguranca(cartao)
+        cartaoService.injetarLimite(cartao)
 
         cartaoRepository.save(cartao)
         logger.info("Cartão do usuário de id ${cartao.idUsuario} cadastrado com sucesso!")
-    }
-
-    private fun injetarNumeroECodSeguranca(cartao: Cartao) {
-        var numeroCartao: String
-        var codigoSeguranca: String
-
-
-        do {
-            numeroCartao = (1..16).joinToString("") { Random.nextInt(10).toString() }
-            codigoSeguranca = Random.nextInt(1000).toString().padStart(3, '0')
-        } while (cartaoRepository.existsByNumeroCartao(numeroCartao))
-
-        cartao.numeroCartao = numeroCartao
-        cartao.codigoSeguranca = codigoSeguranca
-    }
-
-    private fun injetarLimite(cartao: Cartao) {
-        strategys.forEach{ s -> s.definirLimite(cartao) }
     }
 }

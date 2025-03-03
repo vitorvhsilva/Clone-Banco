@@ -48,9 +48,6 @@ class PedidoCartaoListenerTest {
     private lateinit var faturaMapper: FaturaMapper
     @Mock
     private lateinit var faturaRepository: FaturaRepository
-    @Mock
-    private val strategys: List<LimiteStrategy> = listOf(LimiteBaseStrategy(), LimiteInfinityStrategy(),
-        LimitePlusStrategy(), LimitePremiumStrategy())
 
     @Mock
     private lateinit var cartaoService: CartaoService
@@ -75,7 +72,7 @@ class PedidoCartaoListenerTest {
         )
 
         cartao = Cartao(
-            idCartao = "idCartaoTeste",
+            idCartao = null,
             idUsuario = "idUsuarioTeste",
             idCatalogo = 2,
             nomeCartao = "Conquista",
@@ -136,6 +133,19 @@ class PedidoCartaoListenerTest {
             pedidoCartaoListener.processarPedido(event)
         }
         verify(logger, times(1)).error("Esse cartão já foi feito!")
+    }
+
+    @Test
+    fun `Verificar o cadastro de cartao`() {
+        `when`(catalogoRepository.findById(event.idCartao)).thenReturn(Optional.of(cartaoCatalogo))
+        `when`(cartaoRepository.findAllByIdUsuario(event.idUsuario)).thenReturn(mutableListOf())
+
+        pedidoCartaoListener.processarPedido(event)
+
+        verify(cartaoService, times(1)).injetarLimite(cartao)
+        verify(cartaoService, times(1)).injetarNumeroECodSeguranca(cartao)
+        verify(cartaoRepository, times(1)).save(cartao)
+        verify(logger, times(1)).info("Cartão do usuário de id ${cartao.idUsuario} cadastrado com sucesso!")
     }
 
 

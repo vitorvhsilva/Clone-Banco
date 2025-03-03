@@ -3,6 +3,7 @@ package br.com.bank.cards.service
 import br.com.bank.cards.api.dto.output.CartaoOutputDTO
 import br.com.bank.cards.api.dto.output.CatalogoCartaoOutputDTO
 import br.com.bank.cards.api.dto.output.FaturaOutputDTO
+import br.com.bank.cards.api.listener.strategy.cartao.*
 import br.com.bank.cards.domain.entity.Cartao
 import br.com.bank.cards.domain.entity.CatalogoCartoes
 import br.com.bank.cards.domain.entity.Fatura
@@ -44,7 +45,8 @@ class CartaoServiceTest {
     @Mock
     private lateinit var faturaRepository: FaturaRepository
 
-    @InjectMocks
+    private lateinit var strategys: List<LimiteStrategy>
+
     private lateinit var cartaoService: CartaoService
 
     private lateinit var cartao: Cartao
@@ -56,6 +58,24 @@ class CartaoServiceTest {
 
     @BeforeEach
     fun setUp() {
+
+        strategys = listOf(
+            LimiteBaseStrategy(),
+            LimiteInfinityStrategy(),
+            LimitePlusStrategy(),
+            LimitePremiumStrategy()
+        )
+
+        cartaoService = CartaoService(
+            catalogoMapper,
+            cartaoMapper,
+            faturaMapper,
+            catalogoRepository,
+            cartaoRepository,
+            faturaRepository,
+            strategys
+        )
+
         cartao = Cartao(
             idCartao = "idCartaoTeste",
             idUsuario = "idUsuarioTeste",
@@ -164,5 +184,20 @@ class CartaoServiceTest {
         val result = cartaoService.obterFaturaDoCartao(id)
 
         assertEquals(faturasPegas.size, result.size)
+    }
+
+    @Test
+    fun `Verificar a injecao do numero do cartao e codigo de seguranca`() {
+        cartaoService.injetarNumeroECodSeguranca(cartao)
+
+        assertEquals(cartao.numeroCartao.length, 16)
+        assertEquals(cartao.codigoSeguranca.length,3)
+    }
+
+    @Test
+    fun `Verificar a injecao de limite`() {
+        cartaoService.injetarLimite(cartao)
+
+        assertEquals(true, cartao.limite != BigDecimal(0))
     }
 }
