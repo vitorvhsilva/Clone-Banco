@@ -1,24 +1,15 @@
 package br.com.bank.cards.api.listener
 
 import br.com.bank.cards.api.dto.events.PagarFaturaEventDTO
-import br.com.bank.cards.api.dto.events.PedidoCartaoCompletoEventDTO
-import br.com.bank.cards.api.listener.strategy.cartao.LimiteStrategy
-import br.com.bank.cards.domain.entity.Cartao
 import br.com.bank.cards.domain.repository.CartaoRepository
-import br.com.bank.cards.domain.repository.CatalogoCartoesRepository
 import br.com.bank.cards.domain.repository.FaturaRepository
 import br.com.bank.cards.domain.utils.enums.StatusFatura
 import br.com.bank.cards.domain.utils.enums.StatusTransacao
-import br.com.bank.cards.domain.utils.enums.TipoCartao
-import br.com.bank.users.api.exception.CardAlreadyMadeException
-import br.com.bank.users.api.exception.NotFoundException
-import br.com.bank.users.api.exception.SegmentoNotAllowedException
 import jakarta.transaction.Transactional
 import org.slf4j.Logger
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
-import kotlin.random.Random
 
 @Service
 class PagarFaturaListener (
@@ -36,7 +27,7 @@ class PagarFaturaListener (
         val fatura = faturaRepository.findByMesAnoFatura(event.mesAnoFatura)
 
         if (fatura.isEmpty) {
-            logger.info("A fatura desse mês não existe!")
+            logger.error("A fatura desse mês não existe!")
             event.status = StatusTransacao.INVALIDA
             event.mensagem = "A fatura desse mês não existe!"
 
@@ -48,7 +39,7 @@ class PagarFaturaListener (
         val faturaPega = fatura.get()
 
         if (!faturaPega.valorFatura.equals(event.valorFatura)) {
-            logger.info("Valor da fatura diferente do que deveria!")
+            logger.error("Valor da fatura diferente do que deveria!")
             event.status = StatusTransacao.INVALIDA
             event.mensagem = "Valor da fatura diferente do que deveria!"
 
@@ -58,7 +49,7 @@ class PagarFaturaListener (
         }
 
         if (faturaPega.status.equals(StatusFatura.PAGA)) {
-            logger.info("Fatura já foi paga!")
+            logger.error("Fatura já foi paga!")
             event.status = StatusTransacao.INVALIDA
             event.mensagem = "Fatura já foi paga!"
 

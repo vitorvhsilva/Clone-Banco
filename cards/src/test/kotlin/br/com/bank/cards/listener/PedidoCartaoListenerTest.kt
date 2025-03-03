@@ -2,7 +2,6 @@ package br.com.bank.cards.listener
 
 import br.com.bank.cards.api.dto.events.PedidoCartaoCompletoEventDTO
 import br.com.bank.cards.api.listener.PedidoCartaoListener
-import br.com.bank.cards.api.listener.strategy.cartao.*
 import br.com.bank.cards.domain.entity.Cartao
 import br.com.bank.cards.domain.entity.CatalogoCartoes
 import br.com.bank.cards.domain.repository.CartaoRepository
@@ -29,7 +28,6 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.slf4j.Logger
 import java.math.BigDecimal
 import java.util.*
-import kotlin.test.assertEquals
 
 @ExtendWith(MockitoExtension::class)
 class PedidoCartaoListenerTest {
