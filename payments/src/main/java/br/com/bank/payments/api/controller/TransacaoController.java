@@ -27,12 +27,12 @@ public class TransacaoController {
         return transacaoService.fazerPedidoPix(dto);
     }
 
-    @GetMapping("/pix") @Operation(description = "Obtem todos os pix já feitos")
+    @GetMapping("/pix") @Operation(description = "Obtém todos os pix já feitos")
     private List<PedidoPixOutputDTO> obterPixes(Pageable pageable) {
         return transacaoService.obterPixes(pageable);
     }
 
-    @GetMapping("/pix/{id}") @Operation(description = "Obtem o pix pelo id")
+    @GetMapping("/pix/{id}") @Operation(description = "Obtém o pix pelo id")
     private ResponseEntity<PedidoPixOutputDTO> obterPixPorId(@PathVariable String id) {
         return transacaoService.obterPixPorId(id);
     }
@@ -42,12 +42,12 @@ public class TransacaoController {
         return transacaoService.fazerPedidoCredito(dto);
     }
 
-    @GetMapping("/creditos") @Operation(description = "Obtem todos os créditos feitos")
+    @GetMapping("/creditos") @Operation(description = "Obtém todos os créditos feitos")
     private List<PedidoCreditoOutputDTO> obterCreditos(Pageable pageable) {
         return transacaoService.obterCreditos(pageable);
     }
 
-    @GetMapping("/creditos/{id}") @Operation(description = "Obtem o crédito pelo id")
+    @GetMapping("/creditos/{id}") @Operation(description = "Obtém o crédito pelo id")
     private ResponseEntity<PedidoCreditoOutputDTO> obterCreditoPeloId(@PathVariable String id) {
         return transacaoService.obterCreditoPeloId(id);
     }

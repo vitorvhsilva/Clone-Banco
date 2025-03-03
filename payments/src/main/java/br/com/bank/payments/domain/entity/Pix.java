@@ -15,9 +15,10 @@ public class Pix extends Transacao{
     public Pix() {
     }
 
-    public Pix(String idUsuario, BigDecimal valor, StatusTransacao status, String idTransacao) {
+    public Pix(String idUsuario, BigDecimal valor, StatusTransacao status, String idTransacao, String chavePix) {
         super(idUsuario, valor, status);
         this.idTransacao = idTransacao;
+        this.chavePix = chavePix;
     }
 
     public String getIdTransacao() {
