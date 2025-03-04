@@ -1,9 +1,9 @@
 package br.com.bank.payments.domain.service;
 
 import br.com.bank.payments.api.dto.events.TransacaoS3DTO;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
@@ -28,6 +28,7 @@ public class S3Service {
                 .region(Region.US_EAST_1)
                 .build();
         this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
     }
 
     public void salvarTransacaoNoS3(String chave, TransacaoS3DTO novaTransacao) {
