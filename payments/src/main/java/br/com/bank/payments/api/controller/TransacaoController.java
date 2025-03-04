@@ -1,9 +1,11 @@
 package br.com.bank.payments.api.controller;
 
+import br.com.bank.payments.api.dto.events.TransacaoS3DTO;
 import br.com.bank.payments.api.dto.input.PedidoCreditoInputDTO;
 import br.com.bank.payments.api.dto.input.PedidoPixInputDTO;
 import br.com.bank.payments.api.dto.output.PedidoCreditoOutputDTO;
 import br.com.bank.payments.api.dto.output.PedidoPixOutputDTO;
+import br.com.bank.payments.domain.service.S3Service;
 import br.com.bank.payments.domain.service.TransacaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Pageable;
@@ -16,11 +18,13 @@ import java.util.List;
 @RequestMapping("transacoes")
 public class TransacaoController {
 
-    public TransacaoController(TransacaoService transacaoService) {
+    public TransacaoController(TransacaoService transacaoService, S3Service s3Service) {
         this.transacaoService = transacaoService;
+        this.s3Service = s3Service;
     }
 
     private final TransacaoService transacaoService;
+    private final S3Service s3Service;
 
     @PostMapping("/pix") @Operation(description = "Faz um pedido de pix para o serviço de usuários")
     private ResponseEntity<PedidoPixOutputDTO> fazerPedidoPix(@RequestBody PedidoPixInputDTO dto) {
@@ -50,5 +54,10 @@ public class TransacaoController {
     @GetMapping("/creditos/{id}") @Operation(description = "Obtém o crédito pelo id")
     private ResponseEntity<PedidoCreditoOutputDTO> obterCreditoPeloId(@PathVariable String id) {
         return transacaoService.obterCreditoPeloId(id);
+    }
+
+    @PostMapping("/s3")
+    private void testeS3(@RequestBody TransacaoS3DTO dto) {
+        s3Service.salvarTransacaoNoS3(dto.getIdUsuario(), dto);
     }
 }
