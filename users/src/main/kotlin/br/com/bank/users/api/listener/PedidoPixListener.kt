@@ -28,6 +28,8 @@ class PedidoPixListener (
 
             val pixAceito = RespostaPixEventDTO (
                 idTransacao = event.idTransacao,
+                idUsuario = event.idUsuario,
+                valor = event.valor,
                 status = StatusResposta.INVALIDO,
                 mensagem = "Usuário não encontrado!"
             )
@@ -41,6 +43,8 @@ class PedidoPixListener (
 
             val pixAceito = RespostaPixEventDTO (
                 idTransacao = event.idTransacao,
+                idUsuario = event.idUsuario,
+                valor = event.valor,
                 status = StatusResposta.INVALIDO,
                 mensagem = "Recebedor do Pix não encontrado!"
             )
@@ -59,6 +63,8 @@ class PedidoPixListener (
 
         val pixAceito = RespostaPixEventDTO (
             idTransacao = event.idTransacao,
+            idUsuario = event.idUsuario,
+            valor = event.valor,
             status = StatusResposta.VALIDO,
             mensagem = "O pix foi aceito com sucesso!"
         )

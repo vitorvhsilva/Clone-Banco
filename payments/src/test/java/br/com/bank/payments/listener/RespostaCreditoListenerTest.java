@@ -5,6 +5,7 @@ import br.com.bank.payments.api.dto.events.RespostaCreditoEventDTO;
 import br.com.bank.payments.api.listener.RespostaCreditoListener;
 import br.com.bank.payments.domain.entity.Credito;
 import br.com.bank.payments.domain.repository.CreditoRepository;
+import br.com.bank.payments.domain.service.S3Service;
 import br.com.bank.payments.domain.utils.enums.StatusResposta;
 import br.com.bank.payments.domain.utils.enums.StatusTransacao;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,9 @@ public class RespostaCreditoListenerTest {
     @Mock
     private Logger log;
 
+    @Mock
+    private S3Service s3Service;
+
     @InjectMocks
     private RespostaCreditoListener respostaCreditoListener;
 
@@ -43,9 +47,9 @@ public class RespostaCreditoListenerTest {
         credito = new Credito("idUsuarioTeste", BigDecimal.valueOf(100),
                 StatusTransacao.EM_PROCESSAMENTO, "idTransacaoTeste",
                 "idCartaoTeste", 1, "idChaveTeste");
-        eventoValido = new RespostaCreditoEventDTO("idTransacaoTeste",
+        eventoValido = new RespostaCreditoEventDTO("idTransacaoTeste", "idUsuarioTeste", BigDecimal.valueOf(100),
                 StatusResposta.VALIDO, "OK");
-        eventoInvalido = new RespostaCreditoEventDTO("idTransacaoTeste",
+        eventoInvalido = new RespostaCreditoEventDTO("idTransacaoTeste", "idUsuarioTeste", BigDecimal.valueOf(100),
                 StatusResposta.INVALIDO, "ERRO");
     }
 

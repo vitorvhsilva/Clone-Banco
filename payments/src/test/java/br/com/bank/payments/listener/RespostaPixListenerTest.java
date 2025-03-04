@@ -1,13 +1,10 @@
 package br.com.bank.payments.listener;
 
-import br.com.bank.payments.api.dto.events.RespostaCreditoEventDTO;
 import br.com.bank.payments.api.dto.events.RespostaPixEventDTO;
-import br.com.bank.payments.api.listener.RespostaCreditoListener;
 import br.com.bank.payments.api.listener.RespostaPixListener;
-import br.com.bank.payments.domain.entity.Credito;
 import br.com.bank.payments.domain.entity.Pix;
-import br.com.bank.payments.domain.repository.CreditoRepository;
 import br.com.bank.payments.domain.repository.PixRepository;
+import br.com.bank.payments.domain.service.S3Service;
 import br.com.bank.payments.domain.utils.enums.StatusResposta;
 import br.com.bank.payments.domain.utils.enums.StatusTransacao;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +31,9 @@ public class RespostaPixListenerTest {
     @Mock
     private Logger log;
 
+    @Mock
+    private S3Service s3Service;
+
     @InjectMocks
     private RespostaPixListener respostaPixListener;
 
@@ -45,9 +45,9 @@ public class RespostaPixListenerTest {
     void setUp() {
          pix = new Pix("idUsuarioTeste", BigDecimal.valueOf(100),
                 StatusTransacao.EM_PROCESSAMENTO, "idTransacaoTeste", "idChavePixTeste");
-        eventoValido = new RespostaPixEventDTO("idTransacaoTeste",
+        eventoValido = new RespostaPixEventDTO("idTransacaoTeste", "idUsuarioTeste", BigDecimal.valueOf(100),
                 StatusResposta.VALIDO, "OK");
-        eventoInvalido = new RespostaPixEventDTO("idTransacaoTeste",
+        eventoInvalido = new RespostaPixEventDTO("idTransacaoTeste", "idUsuarioTeste", BigDecimal.valueOf(100),
                 StatusResposta.INVALIDO, "ERRO");
     }
 

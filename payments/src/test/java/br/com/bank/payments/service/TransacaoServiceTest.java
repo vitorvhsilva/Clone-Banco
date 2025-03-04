@@ -11,6 +11,7 @@ import br.com.bank.payments.domain.entity.Credito;
 import br.com.bank.payments.domain.entity.Pix;
 import br.com.bank.payments.domain.repository.CreditoRepository;
 import br.com.bank.payments.domain.repository.PixRepository;
+import br.com.bank.payments.domain.service.S3Service;
 import br.com.bank.payments.domain.service.TransacaoService;
 import br.com.bank.payments.domain.utils.enums.StatusTransacao;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +58,9 @@ public class TransacaoServiceTest {
 
     @Mock
     private KafkaTemplate<String, PedidoCreditoEventDTO> pedidoCreditoKafkaTemplate;
+
+    @Mock
+    private S3Service s3Service;
 
     @Mock
     private Logger log;

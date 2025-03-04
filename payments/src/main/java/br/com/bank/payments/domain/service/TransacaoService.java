@@ -2,6 +2,7 @@ package br.com.bank.payments.domain.service;
 
 import br.com.bank.payments.api.dto.events.PedidoCreditoEventDTO;
 import br.com.bank.payments.api.dto.events.PedidoPixEventDTO;
+import br.com.bank.payments.api.dto.events.TransacaoS3DTO;
 import br.com.bank.payments.api.dto.input.PedidoCreditoInputDTO;
 import br.com.bank.payments.api.dto.input.PedidoPixInputDTO;
 import br.com.bank.payments.api.dto.output.PedidoCreditoOutputDTO;
@@ -31,15 +32,16 @@ public class TransacaoService {
     private final CreditoRepository creditoRepository;
     private final KafkaTemplate<String, PedidoPixEventDTO> pedidoPixKafkaTemplate;
     private final KafkaTemplate<String, PedidoCreditoEventDTO> pedidoCreditoKafkaTemplate;
+    private final S3Service s3Service;
 
-    public TransacaoService(ModelMapper modelMapper, Logger log, PixRepository pixRepository, CreditoRepository creditoRepository,
-                            KafkaTemplate<String, PedidoPixEventDTO> pedidoPixKafkaTemplate, KafkaTemplate<String, PedidoCreditoEventDTO> pedidoCreditoKafkaTemplate) {
+    public TransacaoService(ModelMapper modelMapper, Logger log, PixRepository pixRepository, CreditoRepository creditoRepository, KafkaTemplate<String, PedidoPixEventDTO> pedidoPixKafkaTemplate, KafkaTemplate<String, PedidoCreditoEventDTO> pedidoCreditoKafkaTemplate, S3Service s3Service) {
         this.modelMapper = modelMapper;
         this.log = log;
         this.pixRepository = pixRepository;
         this.creditoRepository = creditoRepository;
         this.pedidoPixKafkaTemplate = pedidoPixKafkaTemplate;
         this.pedidoCreditoKafkaTemplate = pedidoCreditoKafkaTemplate;
+        this.s3Service = s3Service;
     }
 
     public ResponseEntity<PedidoPixOutputDTO> fazerPedidoPix(PedidoPixInputDTO dto) {
@@ -52,6 +54,9 @@ public class TransacaoService {
 
         pedidoPixKafkaTemplate.send("pedido-pix-topic", pixEvent.getIdUsuario(), pixEvent);
         log.info("Pedido de pix do usuário " + pixEvent.getIdUsuario() + " feito!");
+
+        TransacaoS3DTO transacaoS3 = new TransacaoS3DTO(pixEvent);
+        s3Service.salvarTransacaoNoS3(transacaoS3.getIdUsuario(), transacaoS3);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(pixOutput);
     }
@@ -80,6 +85,8 @@ public class TransacaoService {
         pedidoCreditoKafkaTemplate.send("pedido-credito-topic", creditoEvent.getIdUsuario(), creditoEvent);
         log.info("Pedido de credito do usuário " + creditoEvent.getIdUsuario() + " feito!");
 
+        TransacaoS3DTO transacaoS3 = new TransacaoS3DTO(creditoEvent);
+        s3Service.salvarTransacaoNoS3(transacaoS3.getIdUsuario(), transacaoS3);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(creditoOutput);
     }

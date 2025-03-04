@@ -18,13 +18,11 @@ import java.util.List;
 @RequestMapping("transacoes")
 public class TransacaoController {
 
-    public TransacaoController(TransacaoService transacaoService, S3Service s3Service) {
+    public TransacaoController(TransacaoService transacaoService) {
         this.transacaoService = transacaoService;
-        this.s3Service = s3Service;
     }
 
     private final TransacaoService transacaoService;
-    private final S3Service s3Service;
 
     @PostMapping("/pix") @Operation(description = "Faz um pedido de pix para o serviço de usuários")
     private ResponseEntity<PedidoPixOutputDTO> fazerPedidoPix(@RequestBody PedidoPixInputDTO dto) {
@@ -54,10 +52,5 @@ public class TransacaoController {
     @GetMapping("/creditos/{id}") @Operation(description = "Obtém o crédito pelo id")
     private ResponseEntity<PedidoCreditoOutputDTO> obterCreditoPeloId(@PathVariable String id) {
         return transacaoService.obterCreditoPeloId(id);
-    }
-
-    @PostMapping("/s3")
-    private void testeS3(@RequestBody TransacaoS3DTO dto) {
-        s3Service.salvarTransacaoNoS3(dto.getIdUsuario(), dto);
     }
 }

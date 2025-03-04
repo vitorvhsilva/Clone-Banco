@@ -36,6 +36,8 @@ class PedidoCreditoListener(
 
             val respostaCredito = RespostaCreditoEventDTO (
                 idTransacao = event.idTransacao,
+                idUsuario = event.idUsuario,
+                valor = event.valor,
                 status = StatusResposta.INVALIDO,
                 mensagem = "Valor do crédito maior que o limite!"
             )
@@ -69,6 +71,8 @@ class PedidoCreditoListener(
         val respostaCredito = RespostaCreditoEventDTO (
             idTransacao = event.idTransacao,
             status = StatusResposta.VALIDO,
+            idUsuario = event.idUsuario,
+            valor = event.valor,
             mensagem = "O credito foi aceito com sucesso!"
         )
 
