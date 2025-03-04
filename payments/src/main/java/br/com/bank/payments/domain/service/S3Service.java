@@ -4,7 +4,10 @@ import br.com.bank.payments.api.dto.events.TransacaoS3DTO;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -23,9 +26,16 @@ public class S3Service {
     private final S3Client s3Client;
     private final ObjectMapper objectMapper;
 
-    public S3Service() {
+    public S3Service(
+            @Value("${aws.access-key-id}") String accessKeyId,
+            @Value("${aws.secret-key}") String secretKey,
+            @Value("${aws.region}") String region
+    ) {
         this.s3Client = S3Client.builder()
-                .region(Region.US_EAST_1)
+                .region(Region.of(region))
+                .credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create(accessKeyId, secretKey)
+                ))
                 .build();
         this.objectMapper = new ObjectMapper();
         this.objectMapper.registerModule(new JavaTimeModule());
